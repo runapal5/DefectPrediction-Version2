@@ -22,7 +22,7 @@ public class TrainingData implements Serializable, SanityCheck {
    
     @Override
     public void sanityCheck() {
-        if (labelledPoints.isEmpty()) {
+        if (labelledPoints == null) {
             throw new AssertionError("Labelled Point is empty");
         }
         
