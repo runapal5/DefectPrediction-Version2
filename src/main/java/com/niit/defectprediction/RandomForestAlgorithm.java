@@ -25,9 +25,10 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 
 	@Override
 	public PredictedResult predict(RandomForestModel randomForestModel, Query query) {		
-		logger.info("**********************Prediction on the model************************");
-		logger.info("Query:Features ::::"+query.getFeatures());
-		return new PredictedResult(randomForestModel.predict(Vectors.dense(query.getFeatures()))) ;
+		System.out.println("**********************Prediction on the model************************");
+		System.out.println("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
+		return new PredictedResult(randomForestModel.predict(Vectors.dense(query.getPlan(),query.getRegwt(),query.getReqsize(),query.getReqquality()))) ;
+		
 	}
 
 	@Override
