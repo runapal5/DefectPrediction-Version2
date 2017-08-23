@@ -15,9 +15,13 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.mllib.linalg.DenseVector;
+import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.util.MLUtils;
 import org.apache.spark.rdd.RDD;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 //import org.apache.spark.sql.Row;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -49,39 +53,8 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
 
     @Override
     public TrainingData readTraining(SparkContext sc) {
-       /*
-    	JavaRDD labelledPoints1 = null;
+      
     	
-    	labelledPoints1 = PJavaEventStore.aggregateProperties(
-                dsp.getAppName(),
-                "user",
-                OptionHelper.<String>none(),
-                OptionHelper.<DateTime>none(),
-                OptionHelper.<DateTime>none(),
-                OptionHelper.<List<String>>none(),
-                sc).map(
-                		new Function<Tuple2<String, PropertyMap>,LabeledPoint>() {
-
-                			
-							@Override
-							public LabeledPoint call(
-									Tuple2<String, PropertyMap> entityIdProperty)
-									throws Exception {
-								System.out.println("entityIdProperty loaded from events store :::"+entityIdProperty);
-								Set<String> keys = JavaConversions$.MODULE$.setAsJavaSet(entityIdProperty._2().keySet());
-		                        Map<String, String> properties = new HashMap<>();
-		                        for (String key : keys) {
-		                            properties.put(key, entityIdProperty._2().get(key, String.class));
-		                        }
-		                        System.out.println("Properties loaded from events store :::"+properties.toString());
-								return null;
-							}                  			
-                  	      }
-                		
-                		);
-    	
-    	 System.out.println("readTraining :::"+labelledPoints1);
-    	*/
     	String datapath = "/quickstartapp/trainResult.txt";//"input/new-result/trainResult.txt";
         JavaRDD labelledPoints = null;
         try {
@@ -92,6 +65,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
            
         }
         
+    	
         return new TrainingData(labelledPoints);
     }
 

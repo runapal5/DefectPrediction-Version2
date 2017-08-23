@@ -27,6 +27,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	public PredictedResult predict(RandomForestModel randomForestModel, Query query) {		
 		System.out.println("**********************Prediction on the model************************");
 		System.out.println("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
+		logger.info("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
 		return new PredictedResult(randomForestModel.predict(Vectors.dense(query.getPlan(),query.getRegwt(),query.getReqsize(),query.getReqquality()))) ;
 		
 	}
@@ -34,6 +35,11 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	@Override
 	public RandomForestModel train(SparkContext sparkContext, PreparedData data) {
 		logger.info("**********************Train the model************************");
+		if(data != null && data.getLabelledPoint() != null){
+			System.out.println("Counts :::"+data.getLabelledPoint().count());
+			logger.info("**********************Train the model*****Counts :::"+data.getLabelledPoint().count());
+		}
+		
 		HashMap<Integer, Integer> categoricalFeaturesInfo =new HashMap<Integer, Integer>();
 		RandomForestModel model = RandomForest.trainClassifier(data.getLabelledPoint(), ap.getNumClasses(),
 			      categoricalFeaturesInfo, ap.getNumTrees(), ap.getFeatureSubsetStrategy(), ap.getImpurity(), ap.getMaxDepth(), ap.getMaxBins(),
