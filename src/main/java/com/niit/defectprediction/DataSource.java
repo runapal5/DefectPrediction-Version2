@@ -49,7 +49,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
 
     @Override
     public TrainingData readTraining(SparkContext sc) {
-      
+       /*
     	JavaRDD labelledPoints1 = null;
     	
     	labelledPoints1 = PJavaEventStore.aggregateProperties(
@@ -81,7 +81,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
                 		);
     	
     	 System.out.println("readTraining :::"+labelledPoints1);
-    	
+    	*/
     	String datapath = "/quickstartapp/trainResult.txt";//"input/new-result/trainResult.txt";
         JavaRDD labelledPoints = null;
         try {
