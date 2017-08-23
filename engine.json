@@ -1,0 +1,23 @@
+{
+  "id": "default",
+  "description": "Default settings",
+  "engineFactory": "com.niit.defectprediction.ClassificationEngine",
+  "datasource": {
+    "params": {
+      "appName": "defectPrediction"
+    }
+  },
+  "algorithms": [
+    {
+      "name": "randomforest",
+      "params": {
+        "numClasses": 2,
+        "numTrees": 1000,
+        "featureSubsetStrategy": "sqrt",
+        "impurity": "gini",
+        "maxDepth": 4,
+        "maxBins": 100
+      }
+    }
+  ]
+}
