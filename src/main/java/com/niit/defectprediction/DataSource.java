@@ -62,6 +62,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
                 sc).map(
                 		new Function<Tuple2<String, PropertyMap>,LabeledPoint>() {
 
+                			
 							@Override
 							public LabeledPoint call(
 									Tuple2<String, PropertyMap> entityIdProperty)
@@ -79,7 +80,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
                 		
                 		);
     	
-    	
+    	 System.out.println("readTraining :::"+labelledPoints1);
     	
     	String datapath = "/quickstartapp/trainResult.txt ";//"input/new-result/trainResult.txt";
         JavaRDD labelledPoints = null;
