@@ -16,7 +16,7 @@ public class ClassificationEngine extends EngineFactory {
         return new Engine<>(
                 DataSource.class,
                 Preparator.class,
-                Collections.<String, Class<? extends BaseAlgorithm<PreparedData, ?, Query, PredictedResult>>>singletonMap("algo", RandomForestAlgorithm.class),
+                Collections.<String, Class<? extends BaseAlgorithm<PreparedData, ?, Query, PredictedResult>>>singletonMap("randomforest", RandomForestAlgorithm.class),
                 Serving.class
         );
     }
