@@ -66,13 +66,13 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
 							public LabeledPoint call(
 									Tuple2<String, PropertyMap> entityIdProperty)
 									throws Exception {
-								logger.info("entityIdProperty loaded from events store :::"+entityIdProperty);
+								System.out.println("entityIdProperty loaded from events store :::"+entityIdProperty);
 								Set<String> keys = JavaConversions$.MODULE$.setAsJavaSet(entityIdProperty._2().keySet());
 		                        Map<String, String> properties = new HashMap<>();
 		                        for (String key : keys) {
 		                            properties.put(key, entityIdProperty._2().get(key, String.class));
 		                        }
-		                        logger.info("Properties loaded from events store :::"+properties.toString());
+		                        System.out.println("Properties loaded from events store :::"+properties.toString());
 								return null;
 							}                  			
                   	      }
