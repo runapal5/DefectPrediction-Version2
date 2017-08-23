@@ -18,7 +18,7 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.util.MLUtils;
 import org.apache.spark.rdd.RDD;
-import org.apache.spark.sql.Row;
+//import org.apache.spark.sql.Row;
 import org.joda.time.DateTime;
 
 import scala.Option;
@@ -47,7 +47,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
     public TrainingData readTraining(SparkContext sc) {
       
     	JavaRDD<LabeledPoint> labelledPointRDD = null;
-    	String datapath = "/quickstartapp/trainResult.txt" ;//"input/new-result/trainResult.txt";
+    	String datapath = "/quickstartapp/trainResult.txt ";//"input/new-result/trainResult.txt";
         JavaRDD labelledPoints = null;
         try {
         	labelledPoints = MLUtils.loadLibSVMFile(sc, datapath).toJavaRDD();
