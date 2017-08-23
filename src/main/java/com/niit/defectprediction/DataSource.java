@@ -20,6 +20,8 @@ import org.apache.spark.mllib.util.MLUtils;
 import org.apache.spark.rdd.RDD;
 //import org.apache.spark.sql.Row;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import scala.Option;
 import scala.Tuple2;
@@ -36,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query, Set<String>> {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DataSource.class);
 
     private final DataSourceParams dsp;
 
@@ -46,7 +50,37 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
     @Override
     public TrainingData readTraining(SparkContext sc) {
       
-    	JavaRDD<LabeledPoint> labelledPointRDD = null;
+    	JavaRDD labelledPoints1 = null;
+    	
+    	labelledPoints1 = PJavaEventStore.aggregateProperties(
+                dsp.getAppName(),
+                "user",
+                OptionHelper.<String>none(),
+                OptionHelper.<DateTime>none(),
+                OptionHelper.<DateTime>none(),
+                OptionHelper.<List<String>>none(),
+                sc).map(
+                		new Function<Tuple2<String, PropertyMap>,LabeledPoint>() {
+
+							@Override
+							public LabeledPoint call(
+									Tuple2<String, PropertyMap> entityIdProperty)
+									throws Exception {
+								logger.info("entityIdProperty loaded from events store :::"+entityIdProperty);
+								Set<String> keys = JavaConversions$.MODULE$.setAsJavaSet(entityIdProperty._2().keySet());
+		                        Map<String, String> properties = new HashMap<>();
+		                        for (String key : keys) {
+		                            properties.put(key, entityIdProperty._2().get(key, String.class));
+		                        }
+		                        logger.info("Properties loaded from events store :::"+properties.toString());
+								return null;
+							}                  			
+                  	      }
+                		
+                		);
+    	
+    	
+    	
     	String datapath = "/quickstartapp/trainResult.txt ";//"input/new-result/trainResult.txt";
         JavaRDD labelledPoints = null;
         try {
