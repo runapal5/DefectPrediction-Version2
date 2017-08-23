@@ -35,7 +35,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	public RandomForestModel train(SparkContext sparkContext, PreparedData data) {
 		logger.info("**********************Train the model************************");
 		HashMap<Integer, Integer> categoricalFeaturesInfo =new HashMap<Integer, Integer>();
-		RandomForestModel model = RandomForest.trainClassifier(data.getTrainingData(), ap.getNumClasses(),
+		RandomForestModel model = RandomForest.trainClassifier(data.getLabelledPoint(), ap.getNumClasses(),
 			      categoricalFeaturesInfo, ap.getNumTrees(), ap.getFeatureSubsetStrategy(), ap.getImpurity(), ap.getMaxDepth(), ap.getMaxBins(),
 			      ap.getSeed());
 		
