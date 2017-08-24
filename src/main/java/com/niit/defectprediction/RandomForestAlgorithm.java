@@ -1,6 +1,8 @@
 package com.niit.defectprediction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.predictionio.controller.java.P2LJavaAlgorithm;
 import org.apache.predictionio.data.storage.Model;
@@ -28,6 +30,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		System.out.println("**********************Prediction on the model************************");
 		System.out.println("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
 		logger.info("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
+		logger.info("Predicted Result:"+randomForestModel.predict(Vectors.dense(query.getPlan(),query.getRegwt(),query.getReqsize(),query.getReqquality())));
+			
 		return new PredictedResult(randomForestModel.predict(Vectors.dense(query.getPlan(),query.getRegwt(),query.getReqsize(),query.getReqquality()))) ;
 		
 	}
@@ -40,6 +44,9 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			logger.info("**********************Train the model*****Counts :::"+data.getLabelledPoint().count());
 		}
 		
+		logger.info("Parmeter Values::"+ap.getNumClasses() +","+ap.getNumTrees()+","+ap.getMaxDepth());
+		System.out.println("Parmeter Values::"+ap.getNumClasses() +","+ap.getNumTrees()+","+ap.getMaxDepth());
+		
 		HashMap<Integer, Integer> categoricalFeaturesInfo =new HashMap<Integer, Integer>();
 		RandomForestModel model = RandomForest.trainClassifier(data.getLabelledPoint(), ap.getNumClasses(),
 			      categoricalFeaturesInfo, ap.getNumTrees(), ap.getFeatureSubsetStrategy(), ap.getImpurity(), ap.getMaxDepth(), ap.getMaxBins(),
@@ -48,6 +55,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		
 		return model;
 	}
+	
 	
 	
 
