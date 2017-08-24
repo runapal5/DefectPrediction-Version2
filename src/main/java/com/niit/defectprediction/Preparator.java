@@ -7,6 +7,6 @@ public class Preparator extends PJavaPreparator<TrainingData, PreparedData> {
 
     @Override
     public PreparedData prepare(SparkContext sc, TrainingData trainingData) {
-        return new PreparedData(trainingData.getLabelledPoints());
+        return new PreparedData(trainingData);
     }
 }

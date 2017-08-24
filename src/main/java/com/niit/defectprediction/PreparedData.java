@@ -5,15 +5,16 @@ import java.io.Serializable;
 import org.apache.spark.api.java.JavaRDD;
 
 public class PreparedData implements Serializable {
-    private final JavaRDD labelledPoint;
+    private final TrainingData trainingData;
 
-    public PreparedData(JavaRDD labelledPoint) {
-        this.labelledPoint = labelledPoint;
-    }
-
-	public JavaRDD getLabelledPoint() {
-		return labelledPoint;
+    public TrainingData getTrainingData() {
+		return trainingData;
 	}
 
+	public PreparedData(TrainingData trainingData) {
+        this.trainingData = trainingData;
+    }
+
+    
    
 }

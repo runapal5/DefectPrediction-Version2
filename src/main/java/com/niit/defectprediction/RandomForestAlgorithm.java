@@ -39,16 +39,16 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	@Override
 	public RandomForestModel train(SparkContext sparkContext, PreparedData data) {
 		logger.info("**********************Train the model************************");
-		if(data != null && data.getLabelledPoint() != null){
-			System.out.println("Counts :::"+data.getLabelledPoint().count());
-			logger.info("**********************Train the model*****Counts :::"+data.getLabelledPoint().count());
+		if(data != null && data.getTrainingData().getLabelledPoints() != null){
+			System.out.println("Counts :::"+data.getTrainingData().getLabelledPoints().count());
+			logger.info("**********************Train the model*****Counts :::"+data.getTrainingData().getLabelledPoints().count());
 		}
 		
 		logger.info("Parmeter Values::"+ap.getNumClasses() +","+ap.getNumTrees()+","+ap.getMaxDepth());
 		System.out.println("Parmeter Values::"+ap.getNumClasses() +","+ap.getNumTrees()+","+ap.getMaxDepth());
 		
 		HashMap<Integer, Integer> categoricalFeaturesInfo =new HashMap<Integer, Integer>();
-		RandomForestModel model = RandomForest.trainClassifier(data.getLabelledPoint(), ap.getNumClasses(),
+		RandomForestModel model = RandomForest.trainClassifier(data.getTrainingData().getLabelledPoints(), ap.getNumClasses(),
 			      categoricalFeaturesInfo, ap.getNumTrees(), ap.getFeatureSubsetStrategy(), ap.getImpurity(), ap.getMaxDepth(), ap.getMaxBins(),
 			      ap.getSeed());
 		
