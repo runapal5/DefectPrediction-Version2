@@ -23,7 +23,7 @@ import org.apache.spark.rdd.RDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
 
-import com.example.RandomForest.TrainedData;
+
 
 public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, RandomForestModel, Query, PredictedResult> {
 	
