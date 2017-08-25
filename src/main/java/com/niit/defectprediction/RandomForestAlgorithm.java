@@ -62,14 +62,17 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
         SparkConf sparkConf1 = new SparkConf().setAppName("defectPrediction")
                 .setMaster("local[*]")
                 .set("spark.executor.memory","3g")
-                .set("spark.driver.memory", "3g");
-        
+                .set("spark.driver.memory", "3g")
+                .set("spark.driver.allowMultipleContexts", "true");
+        SparkContext sc = new SparkContext(sparkConf1);
         // initializing the spark context
-        JavaSparkContext jsc = new JavaSparkContext(sparkConf1);
+       // JavaSparkContext jsc = JavaSparkContext.fromSparkContext(arg0) //new JavaSparkContext(sparkConf1);
 		
 		
-		 JavaRDD data = MLUtils.loadLibSVMFile(jsc.sc(), testDatas).toJavaRDD();
+		 JavaRDD data = MLUtils.loadLibSVMFile(sc, testDatas).toJavaRDD();
 		  
+		 logger.info("*************Test Data Path Loaded**********" ); 
+		 
 		 JavaPairRDD<Double, Double> predictionAndLabel =
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
 		            @Override
