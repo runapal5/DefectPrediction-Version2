@@ -54,16 +54,23 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 
 		final RandomForestModel model = randomForestModel;
 		logger.info("Learned classification tree model:\n" + model.toDebugString()); 
-		List<TestData> testDatas = query.getTestDatas();
+
 		
-		logger.info("Spark Context:\n" + getSparkContext()); 
-		
-		
+
 		String datapath =  ap.getTestDataFile();
 		logger.info("TestData File:\n" + datapath); 
 		
 		
-		 JavaRDD data = MLUtils.loadLibSVMFile(getSparkContext(), datapath).toJavaRDD();
+		logger.info("Spark Context:\n" + getSparkContext()); 
+		
+		String testDatas = query.getTestDataPath();
+		logger.info("Test Data Path:\n" +testDatas); 
+		
+		
+		
+		
+		
+		 JavaRDD data = MLUtils.loadLibSVMFile(getSparkContext(), testDatas).toJavaRDD();
 		  
 		 JavaPairRDD<Double, Double> predictionAndLabel =
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
@@ -91,9 +98,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		  list.add(one);
 		  JavaRDD<LabeledPoint> data = new JavaSparkContext(qs.sparkContext()).parallelize(list);
 		  */
-		if(!(testDatas == null || testDatas.isEmpty())){
-			int testDataSize = testDatas.size();
-		}
+		
         		//new PredictedResult(randomForestModel.predict(Vectors.dense(null)))
 		
 		return new PredictedResult(null) ;

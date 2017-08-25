@@ -7,12 +7,12 @@ import java.util.Set;
 
 public class Query implements Serializable{
 	private final String projectId;
-	private final List<TestData> testDatas;
+	private final String testDataPath;
    
 
-	public Query(String projectId,List<TestData> testDatas){
+	public Query(String projectId,String testDataPath){
     	this.projectId = projectId;
-		this.testDatas = testDatas;
+		this.testDataPath = testDataPath;
     }
 	
 	public String getProjectId() {
@@ -20,10 +20,9 @@ public class Query implements Serializable{
 	}
 
 	
-	public List<TestData> getTestDatas() {
-			return testDatas;
+	public String getTestDataPath() {
+		return testDataPath;
 	}
-
-
+	
     	
 }
