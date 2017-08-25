@@ -4,7 +4,8 @@
   "engineFactory": "com.niit.defectprediction.ClassificationEngine",
   "datasource": {
     "params": {
-      "appName": "defectPrediction"
+      "appName": "defectPrediction",
+      "trainingData": "/quickstartapp/trainResult.txt"
     }
   },
   "algorithms": [
@@ -17,7 +18,9 @@
         "impurity": "gini",
         "maxDepth": 4,
         "maxBins": 100,
-        "seed": 200
+        "seed": 200,
+        "testData": "/quickstartapp/testData.txt"
+               
       }
     }
   ]
