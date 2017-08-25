@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import org.apache.spark.rdd.RDD;
-//import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
 
@@ -63,8 +63,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		
 		logger.info("Spark Context:\n" + getSparkContext()); 
 		
-		//SparkSession spark =  SparkSession.builder().master("local[*]").appName("defectPrediction").config("spark.sql.warehouse.dir", "file:////quickstartapp/DefectPrediction/target/").getOrCreate();
-		//logger.info("New Spark Context:\n" + spark.sparkContext()); 
+		SparkSession spark =  SparkSession.builder().master("local[*]").appName("defectPrediction").config("spark.sql.warehouse.dir", "file:////quickstartapp/DefectPrediction/target/").getOrCreate();
+		logger.info("New Spark Context:\n" + spark.sparkContext()); 
 		
 		
 		String testDatas = query.getTestDataPath();
