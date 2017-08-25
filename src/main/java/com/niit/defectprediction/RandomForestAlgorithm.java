@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import org.apache.spark.rdd.RDD;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
-
 
 
 public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, RandomForestModel, Query, PredictedResult> {
@@ -62,6 +62,10 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		
 		
 		logger.info("Spark Context:\n" + getSparkContext()); 
+		
+		SparkSession spark =  SparkSession.builder().master("local[*]").appName("defectPrediction").config("spark.sql.warehouse.dir", "file:////quickstartapp/DefectPrediction/target/").getOrCreate();
+		logger.info("New Spark Context:\n" + spark.sparkContext()); 
+		
 		
 		String testDatas = query.getTestDataPath();
 		logger.info("Test Data Path:\n" +testDatas); 
@@ -126,27 +130,6 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	}
 	
 	
-	@Override
-    public RDD<Tuple2<Object, PredictedResult>> batchPredict(RandomForestModel randomForestModel, RDD<Tuple2<Object, Query>> qs) {
-		
-		logger.info("**********************Prediction on the model:batchPredict************************");
-        try {
-            List<Tuple2<Object, Query>> indexQueries = qs.toJavaRDD().collect();
-            List<Tuple2<Object, PredictedResult>> results = new ArrayList<>();
-            for (Tuple2<Object, Query> indexQuery : indexQueries) {
-            	
-            	
-                results.add(new Tuple2<>(indexQuery._1(), predict(randomForestModel, indexQuery._2())));
-            }
-           
-            return new JavaSparkContext(qs.sparkContext()).parallelize(results).rdd();
-        } catch (Exception e) {
-           // Exceptions.log(e);
-            //Exceptions.rethrowRuntimeException(e);
-        	e.printStackTrace();
-        }
-        return null;
-    }
 	
 	
 }
