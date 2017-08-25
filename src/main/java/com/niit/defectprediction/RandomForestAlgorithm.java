@@ -79,7 +79,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		
 		 JavaRDD data = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();
 		  
-		 logger.info("*************Test Data Path Loaded**********" ); 
+		 logger.info("*************Test Data Path Loaded**********" +data.count()); 
 		 
 		 JavaPairRDD<Double, Double> predictionAndLabel =
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
