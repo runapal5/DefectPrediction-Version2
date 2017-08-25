@@ -2,56 +2,28 @@ package com.niit.defectprediction;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class Query implements Serializable{
-    private final double plan;
-    private final double regwt;
-    private final double reqsize;
-    private final double reqquality;
-    
-    public Query(double plan, double regwt ,double reqsize ,double reqquality){
-    	this.plan = plan;
-    	this.regwt= regwt;
-    	this.reqsize = reqsize;
-    	this.reqquality = reqquality;
+	private final String projectId;
+	private final List<TestData> testDatas;
+   
+
+	public Query(String projectId,List<TestData> testDatas){
+    	this.projectId = projectId;
+		this.testDatas = testDatas;
     }
 	
-    
+	public String getProjectId() {
+		return projectId;
+	}
+
 	
-	public double getPlan() {
-		return plan;
+	public List<TestData> getTestDatas() {
+			return testDatas;
 	}
 
 
-
-	public double getRegwt() {
-		return regwt;
-	}
-
-
-
-	public double getReqsize() {
-		return reqsize;
-	}
-
-
-
-	public double getReqquality() {
-		return reqquality;
-	}
-
-
-
-	@Override
-    public String toString() {
     	
-		return "Query{" +
-                "plan='" + plan +
-                ", regwt=" + regwt +
-                ", reqsize=" + reqsize +
-                ", reqquality=" + reqquality +
-                '}';
-               
-    }
 }

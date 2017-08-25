@@ -54,8 +54,8 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
     @Override
     public TrainingData readTraining(SparkContext sc) {
       
-    	
-    	String datapath = "/quickstartapp/trainResult.txt";//"input/new-result/trainResult.txt";
+    	logger.info("**********************readTraining************************"+dsp.getTrainingData());
+    	String datapath = dsp.getTrainingData(); //"/quickstartapp/trainResult.txt "input/new-result/trainResult.txt";
         JavaRDD labelledPoints = null;
         try {
         	labelledPoints = MLUtils.loadLibSVMFile(sc, datapath).toJavaRDD();
@@ -65,6 +65,7 @@ public class DataSource extends PJavaDataSource<TrainingData, EmptyParams, Query
            
         }
         
+       
     	
         return new TrainingData(labelledPoints);
     }

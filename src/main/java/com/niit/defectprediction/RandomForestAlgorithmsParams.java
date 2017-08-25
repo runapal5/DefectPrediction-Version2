@@ -18,8 +18,11 @@ public class RandomForestAlgorithmsParams implements Params {
 	private final Integer maxBins;
 	
 	private final Integer seed;
+	
+	private final String testDataFile;
 
-	public RandomForestAlgorithmsParams(Integer numClasses ,Integer numTrees ,String featureSubsetStrategy , String impurity , Integer maxDepth , Integer maxBins , Integer seed){
+
+	public RandomForestAlgorithmsParams(Integer numClasses ,Integer numTrees ,String featureSubsetStrategy , String impurity , Integer maxDepth , Integer maxBins , Integer seed, String testDataFile){
 		
 		this.numClasses = numClasses;
 		this.numTrees = numTrees;
@@ -28,8 +31,13 @@ public class RandomForestAlgorithmsParams implements Params {
 		this.maxDepth = maxDepth;
 		this.maxBins = maxBins;
 		this.seed = seed;
+		this.testDataFile = testDataFile;
 	}
 	
+	
+	public String getTestDataFile() {
+		return testDataFile;
+	}
 	
 	public Integer getSeed() {
 		return seed;
