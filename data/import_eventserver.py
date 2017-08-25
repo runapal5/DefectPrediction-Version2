@@ -16,10 +16,10 @@ def import_events(client, file):
       entity_type="user",
       entity_id=str(count), # use the count num as user ID
       properties= {
-        "regwt" : double(data[1]),
-        "reqsize" : double(data[2]),
-        "reqquality" : double(data[3]),
-        "plan" : double(data[0])
+        "regwt" : float(data[1]),
+        "reqsize" : float(data[2]),
+        "reqquality" : float(data[3]),
+        "actual" : float(data[0])
       }
     )
     count += 1
