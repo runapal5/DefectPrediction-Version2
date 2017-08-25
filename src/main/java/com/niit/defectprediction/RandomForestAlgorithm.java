@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.predictionio.controller.java.P2LJavaAlgorithm;
-import org.apache.predictionio.data.storage.Model;
+import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import org.apache.spark.rdd.RDD;
-//import org.apache.spark.sql.SparkSession;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
 
@@ -30,15 +29,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	private static final Logger logger = LoggerFactory.getLogger(RandomForestAlgorithm.class);
     private final RandomForestAlgorithmsParams ap;
 
-    private SparkContext sparkContext;
     
-    public SparkContext getSparkContext() {
-		return sparkContext;
-	}
-
-	public void setSparkContext(SparkContext sparkContext) {
-		this.sparkContext = sparkContext;
-	}
 
 	public RandomForestAlgorithm(RandomForestAlgorithmsParams ap) {
         this.ap = ap;
@@ -53,28 +44,31 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	
 
 		final RandomForestModel model = randomForestModel;
-		logger.info("Learned classification tree model:\n" + model.toDebugString()); 
+		//logger.info("Learned classification tree model:\n" + model.toDebugString()); 
 
 		
-
+		
 		String datapath =  ap.getTestDataFile();
 		logger.info("TestData File:\n" + datapath); 
 		
-		
-		logger.info("Spark Context:\n" + getSparkContext()); 
-		
-		//SparkSession spark =  SparkSession.builder().master("local[*]").appName("defectPrediction").config("spark.sql.warehouse.dir", "file:////quickstartapp/DefectPrediction/target/").getOrCreate();
-		//logger.info("New Spark Context:\n" + spark.sparkContext()); 
 		
 		
 		String testDatas = query.getTestDataPath();
 		logger.info("Test Data Path:\n" +testDatas); 
 		
 		
+		//---GETTING SPARK CONTEXT
+		 // Configuring spark
+        SparkConf sparkConf1 = new SparkConf().setAppName("defectPrediction")
+                .setMaster("local[*]")
+                .set("spark.executor.memory","3g")
+                .set("spark.driver.memory", "3g");
+        
+        // initializing the spark context
+        JavaSparkContext jsc = new JavaSparkContext(sparkConf1);
 		
 		
-		
-		 JavaRDD data = MLUtils.loadLibSVMFile(getSparkContext(), testDatas).toJavaRDD();
+		 JavaRDD data = MLUtils.loadLibSVMFile(jsc.sc(), testDatas).toJavaRDD();
 		  
 		 JavaPairRDD<Double, Double> predictionAndLabel =
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
@@ -124,7 +118,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		RandomForestModel model = RandomForest.trainClassifier(data.getTrainingData().getLabelledPoints(), ap.getNumClasses(),
 			      categoricalFeaturesInfo, ap.getNumTrees(), ap.getFeatureSubsetStrategy(), ap.getImpurity(), ap.getMaxDepth(), ap.getMaxBins(),
 			      ap.getSeed());
-		setSparkContext(sparkContext);
+	
 		
 		return model;
 	}
