@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import org.apache.spark.rdd.RDD;
+import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
 
@@ -59,17 +61,23 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		
 		//---GETTING SPARK CONTEXT
 		 // Configuring spark
-        SparkConf sparkConf1 = new SparkConf().setAppName("defectPrediction")
+       /* SparkConf sparkConf1 = new SparkConf().setAppName("defectPrediction")
                 .setMaster("local[*]")
                 .set("spark.executor.memory","3g")
                 .set("spark.driver.memory", "3g")
                 .set("spark.driver.allowMultipleContexts", "true");
-        SparkContext sc = new SparkContext(sparkConf1);
+        SparkContext sc = new SparkContext(sparkConf1);*/
         // initializing the spark context
        // JavaSparkContext jsc = JavaSparkContext.fromSparkContext(arg0) //new JavaSparkContext(sparkConf1);
 		
 		
-		 JavaRDD data = MLUtils.loadLibSVMFile(sc, testDatas).toJavaRDD();
+		SparkConf conf = new SparkConf().setAppName("defectPrediction");
+		JavaSparkContext ctx = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
+		JavaStreamingContext context = new JavaStreamingContext(ctx, Durations.seconds(60));
+		
+		
+		
+		 JavaRDD data = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();
 		  
 		 logger.info("*************Test Data Path Loaded**********" ); 
 		 
@@ -77,15 +85,15 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
 		            @Override
 		            public Tuple2<Double, Double> call(LabeledPoint p) {
-		                //System.out.println("Label:::"+p.label() +", Features::"+p.features());
+		            	System.out.println("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
 		            	logger.info("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
-						double[] featArr = p.features().toArray();
+						
 		              
 		            	return new Tuple2<>(model.predict(p.features()), p.label());
 		              
 		            }
 		          });  
-		 
+		 logger.info("*************Prediction Done**********" ); 
 		/*
 		System.out.println("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
 		logger.info("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
