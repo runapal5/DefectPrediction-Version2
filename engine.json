@@ -19,7 +19,7 @@
         "maxDepth": 4,
         "maxBins": 100,
         "seed": 200,
-        "testData": "/quickstartapp/testData.txt"
+        "testDataFile": "/quickstartapp/testData.txt"
                
       }
     }
