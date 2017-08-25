@@ -8,8 +8,7 @@ organization := "io.prediction"
 
 libraryDependencies ++= Seq(
  "org.apache.predictionio" %% "apache-predictionio-core" % "0.11.0-incubating" % "provided",
- "org.apache.spark" %% "spark-sql" % "2.0.0" % "provided",
- "org.apache.spark" %% "spark-streaming" % "2.0.0" % "provided",
+ "org.apache.spark" %% "spark-sql" % "1.5.2" % "provided",
   "commons-io"        % "commons-io"    % "2.4",
   "org.apache.spark" %% "spark-core"    % "1.2.0" % "provided",
   "org.apache.spark" %% "spark-mllib"   % "1.2.0" % "provided",
