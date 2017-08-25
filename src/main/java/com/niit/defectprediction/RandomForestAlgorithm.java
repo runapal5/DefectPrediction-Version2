@@ -31,7 +31,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	private static final Logger logger = LoggerFactory.getLogger(RandomForestAlgorithm.class);
     private final RandomForestAlgorithmsParams ap;
 
-    
+    private static  List<String> predictList = new ArrayList<String>();
 
 	public RandomForestAlgorithm(RandomForestAlgorithmsParams ap) {
         this.ap = ap;
@@ -81,19 +81,26 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		  
 		 logger.info("*************Test Data Path Loaded**********" +data.count()); 
 		 
+		 
+		 try{
+			 
 		 JavaPairRDD<Double, Double> predictionAndLabel =
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
 		            @Override
 		            public Tuple2<Double, Double> call(LabeledPoint p) {
 		            	System.out.println("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
 		            	logger.info("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
-						
-		              
-		            	return new Tuple2<>(model.predict(p.features()), p.label());
-		              
+		            	predictList.add(String.valueOf(p.label()));
+		            	return new Tuple2<>(model.predict(p.features()), p.label());		              
 		            }
-		          });  
-		 logger.info("*************Prediction Done**********" ); 
+		          });
+		 
+		 }catch(Exception e){
+			 logger.info("*************Exception in gettting prediction**********" +e.getMessage()); 
+			 e.printStackTrace();
+		 }
+		 
+		 logger.info("*************Prediction Done**********"+predictList.size()); 
 		/*
 		System.out.println("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
 		logger.info("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
