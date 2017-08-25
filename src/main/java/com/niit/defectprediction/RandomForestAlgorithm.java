@@ -23,6 +23,7 @@ import org.apache.spark.rdd.RDD;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 
 
@@ -94,6 +95,22 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		            	return new Tuple2<>(model.predict(p.features()), p.label());		              
 		            }
 		          });
+		 
+		 
+		 
+		 JavaRDD<Tuple2<Object, Object>> predictionAndLabels = data.map(
+	      	      new Function<LabeledPoint, Tuple2<Object, Object>>() {
+	      			public Tuple2<Object, Object> call(LabeledPoint p) {
+	      	          Double prediction = model.predict(p.features());
+		      	        System.out.println("Predict:::"+prediction +", Actual::"+p.label());
+		            	logger.info("Predict:::"+prediction +", Actual::"+p.label());
+		            	predictList.add(String.valueOf(prediction));
+	      	          
+	      	          return new Tuple2<Object, Object>(prediction, p.label());
+	      	        }
+	      	      }
+	      	    ); 
+		 
 		 
 		 }catch(Exception e){
 			 logger.info("*************Exception in gettting prediction**********" +e.getMessage()); 
