@@ -16,20 +16,13 @@ public class TestDataResult {
     	this.predicted = predicted;
     }
 	
-	 public double getActual() {
-			return actual;
-		}
+	 
 
 
-	public double getPredicted() {
-		return predicted;
-	}
-
-
-	
-	public double getPlan() {
+	public double getActual() {
 		return actual;
 	}
+
 
 
 
@@ -39,15 +32,25 @@ public class TestDataResult {
 
 
 
+
 	public double getReqsize() {
 		return reqsize;
 	}
 
 
 
+
 	public double getReqquality() {
 		return reqquality;
 	}
+
+
+
+
+	public double getPredicted() {
+		return predicted;
+	}
+
 
 
 
