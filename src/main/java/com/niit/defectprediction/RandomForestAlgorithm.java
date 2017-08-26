@@ -19,7 +19,11 @@ import org.slf4j.LoggerFactory;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.PairFunction;
 
+import scala.Tuple2;
+
+import com.example.RandomForest.TrainedData;
 import com.niit.defectprediction.CsvFileWriter;
 
 
@@ -56,6 +60,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		SparkConf conf = new SparkConf().setAppName("defectPrediction");
 		JavaSparkContext ctx = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 		JavaStreamingContext context = new JavaStreamingContext(ctx, Durations.seconds(60));
+		
 		//GETTING THE SPARK CONTEXT
 		
 		
@@ -66,7 +71,23 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 
 		 try{
 		 
-			List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
+			 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
+			  
+			 
+			   JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
+			   JavaPairRDD<Double, Double> predictionAndLabel =
+					  parallelLabelled.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
+			            @Override
+			            public Tuple2<Double, Double> call(LabeledPoint p) {
+			            	 logger.info("*************Inside....predictionAndLabel**********"); 
+			            	//return new Tuple2<>(model.predict(p.features()), p.label());
+			              return null;
+			            }
+			          });  
+			 
+			 
+			 
+			 
 			 int size = loadedTestdataList.size();
 			 logger.info("*************Test Data Path Loaded:size**********" +size); 
 			 
