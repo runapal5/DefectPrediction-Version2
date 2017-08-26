@@ -16,15 +16,10 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.apache.spark.mllib.util.MLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import scala.Tuple2;
-
-import org.apache.spark.rdd.RDD;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
+
 
 
 
@@ -84,28 +79,13 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			 for(int i=0; i < size ; i++){
 				 LabeledPoint labelData = loadedTestdataList.get(i);
 				 
-				 logger.info("*************labelData**********" +labelData.toString());
+				 logger.info(i+"*************labelData**********"+labelData.toString());
 				 logger.info("*************labelData:label**********" +labelData.label());
-				 logger.info("*************labelData:features**********" +labelData.features().toJson());
+				 logger.info("*************labelData:features**********" +labelData.features());
+				 logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
 				 
 			 }
 			 
-			 
-		 
-		 /*
-		 
-		 JavaRDD<Tuple2<Object, Object>> predictionAndLabels = data.map(
-	      	      new Function<LabeledPoint, Tuple2<Object, Object>>() {
-	      			public Tuple2<Object, Object> call(LabeledPoint p) {
-	      	          Double prediction = model.predict(p.features());
-		      	        System.out.println("Predict:::"+prediction +", Actual::"+p.label());
-		            	logger.info("Predict:::"+prediction +", Actual::"+p.label());
-		            	predictList.add(String.valueOf(prediction));
-	      	          
-	      	          return new Tuple2<Object, Object>(prediction, p.label());
-	      	        }
-	      	      }
-	      	    ); */
 		 
 		 
 		 }catch(Exception e){
@@ -114,21 +94,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 }
 		 
 		 logger.info("*************Prediction Done**********"+predictList.size()); 
-		/*
-		System.out.println("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
-		logger.info("Query:Features ::::"+query.getPlan()+","+query.getRegwt()+","+query.getReqsize()+","+query.getReqquality());
-		logger.info("Predicted Result:"+randomForestModel.predict(Vectors.dense(query.getPlan(),query.getRegwt(),query.getReqsize(),query.getReqquality())));
-		*/
 		
-		  /*List<LabeledPoint> list = new ArrayList<LabeledPoint>();
-		  LabeledPoint zero = new LabeledPoint(0.0, Vectors.dense(1.0, 0.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0));
-		  LabeledPoint one = new LabeledPoint(1.0, Vectors.dense(8.0,7.0,6.0,4.0,5.0,6.0,1.0,2.0,3.0));
-		  list.add(zero);
-		  list.add(one);
-		  JavaRDD<LabeledPoint> data = new JavaSparkContext(qs.sparkContext()).parallelize(list);
-		  */
-		
-        		//new PredictedResult(randomForestModel.predict(Vectors.dense(null)))
 		
 		return new PredictedResult(null) ;
 		
