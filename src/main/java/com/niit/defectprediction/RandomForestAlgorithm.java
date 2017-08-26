@@ -30,8 +30,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	private static final Logger logger = LoggerFactory.getLogger(RandomForestAlgorithm.class);
     private final RandomForestAlgorithmsParams ap;
 
-    private static  List<String> predictList = new ArrayList<String>();
-
+    
 	public RandomForestAlgorithm(RandomForestAlgorithmsParams ap) {
         this.ap = ap;
     }
@@ -43,7 +42,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	public PredictedResult predict(RandomForestModel randomForestModel, Query query) {		
 		logger.info("**********************Prediction on the model:predict************************");
 		System.out.println("**********************Prediction on the model:predict************************");
-	
+		List<TestDataResult> predictList = new ArrayList<TestDataResult>();
 
 		final RandomForestModel model = randomForestModel;
 		//logger.info("Learned classification tree model:\n" + model.toDebugString()); 
@@ -78,27 +77,26 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			 
 			 for(int i=0; i < size ; i++){
 				 LabeledPoint labelData = loadedTestdataList.get(i);
-				 
-				 logger.info(i+"*************labelData**********"+labelData.toString());
-				 logger.info("*************labelData:label**********" +labelData.label());
-				 //logger.info("*************labelData:features**********" +labelData.features());
 				 double[] featArr = labelData.features().toArray();
-				 logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
-				 logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
+				 double actual = labelData.label();
+				 double predicted = model.predict(labelData.features());
+				 //logger.info(i+"*************labelData**********"+labelData.toString());
+				 //logger.info("*************labelData:label**********" +labelData.label());
+				 //logger.info("*************labelData:features**********" +labelData.features());
+				 //double[] featArr = labelData.features().toArray();
+				 //logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
+				 //logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
+				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],predicted));
 				 
 			 }
 			 
-		 
-		 
 		 }catch(Exception e){
 			 logger.info("*************Exception in gettting prediction**********" +e.getMessage()); 
 			 e.printStackTrace();
 		 }
 		 
-		 logger.info("*************Prediction Done**********"+predictList.size()); 
-		
-		
-		return new PredictedResult(null) ;
+		logger.info("*************Prediction Done**********"+predictList.size()); 
+		return new PredictedResult(predictList) ;
 		
 	}
 
