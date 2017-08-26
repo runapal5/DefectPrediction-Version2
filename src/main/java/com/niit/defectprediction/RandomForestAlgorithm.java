@@ -77,23 +77,20 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 
 		 try{
 		 
-			
+			List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
+			 int size = loadedTestdataList.size();
+			 logger.info("*************Test Data Path Loaded:size**********" +size); 
+			 
+			 for(int i=0; i < size ; i++){
+				 LabeledPoint labelData = loadedTestdataList.get(i);
+				 
+				 logger.info("*************labelData**********" +labelData.toString());
+				 logger.info("*************labelData:label**********" +labelData.label());
+				 logger.info("*************labelData:features**********" +labelData.features().toJson());
+				 
+			 }
 			 
 			 
-			 
-			 JavaPairRDD<Double, Double> predictionAndLabel =
-					 loadedTestdata.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
-			            @Override
-			            public Tuple2<Double, Double> call(LabeledPoint p) {
-			                //System.out.println("Label:::"+p.label() +", Features::"+p.features());
-			            	 logger.info("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
-							System.out.println("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
-							//double[] featArr = p.features().toArray();
-			               // predResultList.add(new TrainedData(p.label(),featArr[0],featArr[1],featArr[2],model.predict(p.features())));
-			            	return new Tuple2<>(model.predict(p.features()), p.label());
-			              
-			            }
-			          });  
 		 
 		 /*
 		 
