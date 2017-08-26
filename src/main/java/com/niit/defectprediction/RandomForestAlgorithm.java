@@ -81,7 +81,9 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 
 				 logger.info(i+"*************labelData**********"+labelData.toString());
 				 logger.info("*************labelData:label**********" +labelData.label());
-				 logger.info("*************labelData:features**********" +labelData.features());
+				 //logger.info("*************labelData:features**********" +labelData.features());
+				 double[] featArr = labelData.features().toArray();
+				 logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
 				 logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
 				 
 			 }
