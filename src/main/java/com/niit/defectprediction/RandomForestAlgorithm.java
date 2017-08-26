@@ -23,7 +23,7 @@ import org.apache.spark.api.java.function.PairFunction;
 
 import scala.Tuple2;
 
-import com.example.RandomForest.TrainedData;
+
 import com.niit.defectprediction.CsvFileWriter;
 
 
