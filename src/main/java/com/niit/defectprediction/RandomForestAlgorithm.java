@@ -26,6 +26,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 
+import com.example.RandomForest.TrainedData;
+
 
 
 public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, RandomForestModel, Query, PredictedResult> {
@@ -41,6 +43,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	
     
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public PredictedResult predict(RandomForestModel randomForestModel, Query query) {		
 		logger.info("**********************Prediction on the model:predict************************");
@@ -67,28 +70,32 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		//GETTING THE SPARK CONTEXT
 		
 		
-		 JavaRDD loadedTestdata = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();  
+		 JavaRDD<LabeledPoint> loadedTestdata = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();  
 		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.count()); 
+		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.toDebugString()); 
 		 
 		 
 		 try{
 		 
-			 JavaPairRDD<Double, Double> predictionAndLabel =
-					 loadedTestdata.mapToPair(pf);
+			
 			 
-		/*	 
-		 JavaPairRDD<Double, Double> predictionAndLabel =
-				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
-		            @Override
-		            public Tuple2<Double, Double> call(LabeledPoint p) {
-		            	System.out.println("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
-		            	logger.info("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
-		            	predictList.add(String.valueOf(p.label()));
-		            	return new Tuple2<>(model.predict(p.features()), p.label());		              
-		            }
-		          });
+			 
+			 
+			 JavaPairRDD<Double, Double> predictionAndLabel =
+					 loadedTestdata.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
+			            @Override
+			            public Tuple2<Double, Double> call(LabeledPoint p) {
+			                //System.out.println("Label:::"+p.label() +", Features::"+p.features());
+			            	 logger.info("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
+							System.out.println("Predict:::"+model.predict(p.features()) +", Actual::"+p.label());
+							//double[] featArr = p.features().toArray();
+			               // predResultList.add(new TrainedData(p.label(),featArr[0],featArr[1],featArr[2],model.predict(p.features())));
+			            	return new Tuple2<>(model.predict(p.features()), p.label());
+			              
+			            }
+			          });  
 		 
-		 
+		 /*
 		 
 		 JavaRDD<Tuple2<Object, Object>> predictionAndLabels = data.map(
 	      	      new Function<LabeledPoint, Tuple2<Object, Object>>() {
@@ -150,15 +157,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		return model;
 	}
 	
-	 private static PairFunction<LabeledPoint, Double, Double> pf =  new PairFunction<LabeledPoint, Double, Double>() {
-	        @Override
-	        public Tuple2<Double, Double> call(LabeledPoint p) {
-	        	logger.info("******Inside pf****");
-	        	System.out.println("******Inside pf****");
-	            	
-	          return null;
-	        }
-	    };
+	
 	
 	
 }
