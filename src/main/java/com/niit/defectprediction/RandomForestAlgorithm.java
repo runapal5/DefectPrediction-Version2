@@ -20,6 +20,8 @@ import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import com.niit.defectprediction.CsvFileWriter;
+
 
 
 
@@ -47,13 +49,6 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		final RandomForestModel model = randomForestModel;
 		//logger.info("Learned classification tree model:\n" + model.toDebugString()); 
 
-		
-		
-		String datapath =  ap.getTestDataFile();
-		logger.info("TestData File:\n" + datapath); 
-		
-		
-		
 		String testDatas = query.getTestDataPath();
 		logger.info("Test Data Path:\n" +testDatas); 
 		
@@ -87,15 +82,22 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 //logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
 				 //logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
 				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],predicted));
-				 
+				 //featArr[0] - regwt , featArr[1] - reqsize , featArr[2] - reqquality
 			 }
 			 
 		 }catch(Exception e){
 			 logger.info("*************Exception in gettting prediction**********" +e.getMessage()); 
 			 e.printStackTrace();
 		 }
+		 logger.info("*************Prediction Done**********"+predictList.size()); 
 		 
-		logger.info("*************Prediction Done**********"+predictList.size()); 
+		   // Writing Output to CSV File
+		   String testDataResultpath =  ap.getTestDataFile();
+	       logger.info("TestData File:\n" + testDataResultpath); 
+	       CsvFileWriter.writeCsvFile(testDataResultpath, predictList); 
+		 
+	       logger.info("*************Output Saved**********"); 
+		
 		return new PredictedResult(predictList) ;
 		
 	}
