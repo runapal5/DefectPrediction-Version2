@@ -24,6 +24,7 @@ import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
 
+
 import com.niit.defectprediction.CsvFileWriter;
 
 
@@ -67,8 +68,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 JavaRDD<LabeledPoint> loadedTestdata = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();  
 		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.count()); 
 		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.toDebugString()); 
-		 
-		 
+		 long totalDataCount = loadedTestdata.count();
+		 long diffCount = 0;
 		 try{
 		 
 			 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
@@ -92,7 +93,12 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 //double[] featArr = labelData.features().toArray();
 				 //logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
 				 //logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
+				 
 				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],predicted));
+				 if(actual != predicted){
+					 diffCount = diffCount+1 ;
+				 }
+				 
 				 //featArr[0] - regwt , featArr[1] - reqsize , featArr[2] - reqquality
 			 }
 			 
@@ -101,6 +107,13 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			 e.printStackTrace();
 		 }
 		 logger.info("*************Prediction Done**********"+predictList.size()); 
+		 
+		  Double testErr =  1.0 * (totalDataCount - diffCount) / totalDataCount;
+		  logger.info("*********Inaccurate****Test Error**********"+testErr); 
+			      
+		  Double accuracy = 100 -  testErr ;
+		  logger.info("*********Accurate************"+accuracy); 
+		 
 		 
 		   // Writing Output to CSV File
 		   String testDataResultpath =  ap.getTestDataFile();
