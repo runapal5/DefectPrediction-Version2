@@ -26,6 +26,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
 
+import com.example.RandomForest.TrainedData;
+
 
 public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, RandomForestModel, Query, PredictedResult> {
 	
@@ -59,32 +61,23 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		String testDatas = query.getTestDataPath();
 		logger.info("Test Data Path:\n" +testDatas); 
 		
-		
-		//---GETTING SPARK CONTEXT
-		 // Configuring spark
-       /* SparkConf sparkConf1 = new SparkConf().setAppName("defectPrediction")
-                .setMaster("local[*]")
-                .set("spark.executor.memory","3g")
-                .set("spark.driver.memory", "3g")
-                .set("spark.driver.allowMultipleContexts", "true");
-        SparkContext sc = new SparkContext(sparkConf1);*/
-        // initializing the spark context
-       // JavaSparkContext jsc = JavaSparkContext.fromSparkContext(arg0) //new JavaSparkContext(sparkConf1);
-		
-		
+		//GETTING THE SPARK CONTEXT
 		SparkConf conf = new SparkConf().setAppName("defectPrediction");
 		JavaSparkContext ctx = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 		JavaStreamingContext context = new JavaStreamingContext(ctx, Durations.seconds(60));
+		//GETTING THE SPARK CONTEXT
 		
 		
-		
-		 JavaRDD data = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();
-		  
-		 logger.info("*************Test Data Path Loaded**********" +data.count()); 
+		 JavaRDD loadedTestdata = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();  
+		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.count()); 
 		 
 		 
 		 try{
+		 
+			 JavaPairRDD<Double, Double> predictionAndLabel =
+					 loadedTestdata.mapToPair(pf);
 			 
+		/*	 
 		 JavaPairRDD<Double, Double> predictionAndLabel =
 				 data.mapToPair(new PairFunction<LabeledPoint, Double, Double>() {
 		            @Override
@@ -109,7 +102,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	      	          return new Tuple2<Object, Object>(prediction, p.label());
 	      	        }
 	      	      }
-	      	    ); 
+	      	    ); */
 		 
 		 
 		 }catch(Exception e){
@@ -158,7 +151,15 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		return model;
 	}
 	
-	
+	 private static PairFunction<LabeledPoint, Double, Double> pf =  new PairFunction<LabeledPoint, Double, Double>() {
+	        @Override
+	        public Tuple2<Double, Double> call(LabeledPoint p) {
+	        	logger.info("******Inside pf****");
+	        	System.out.println("******Inside pf****");
+	            	
+	          return null;
+	        }
+	    };
 	
 	
 }
