@@ -98,12 +98,6 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 //logger.info( "F1: \n" + metrics.fMeasure() );
 				 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
 				
-			     scala.collection.Iterator<org.apache.spark.mllib.linalg.Vector> mtTr = metrics.confusionMatrix().rowIter();
-			     logger.info( "mtTr.size==="+mtTr.size());
-				while(mtTr.hasNext()){
-				 double[] arr =	mtTr.next().toArray();
-				 logger.info( "arr.size==="+arr.length);
-				}
 				 
 				 /*logger.info( "TP::"+metrics.confusionMatrix().index(0, 0));
 				 logger.info( "FN::"+metrics.confusionMatrix().index(0, 1));
