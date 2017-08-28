@@ -10,6 +10,7 @@ import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.mllib.evaluation.MulticlassMetrics;
+import org.apache.spark.mllib.linalg.Matrix;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
@@ -27,9 +28,10 @@ import scala.Tuple2;
 
 
 
+
 import com.niit.defectprediction.CsvFileWriter;
 
-import org.apache.spark.mllib.linalg.Matrix;
+//import org.apache.spark.mllib.linalg.Matrix;
 
 
 
@@ -83,6 +85,12 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				// Compute raw scores on the test set.
 				 JavaPairRDD<Object, Object> predictionAndLabels = parallelLabelled.mapToPair(p ->
 				   new Tuple2<>(model.predict(p.features()), p.label()));
+				 
+				 logger.info("predictionAndLabelsCount: \n" + predictionAndLabels.count());
+				 
+				 logger.info("predictionAndLabels: \n" + predictionAndLabels.toDebugString());
+				 
+				 logger.info("predictionAndLabels###: \n" + predictionAndLabels.toString());
 	
 				 // Get evaluation metrics.
 				 MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
@@ -92,7 +100,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 logger.info("Confusion matrix: \n" + confusion);
 	
 				 // Overall statistics
-				 logger.info("Accuracy = " + metrics.accuracy());
+				// logger.info("Accuracy = " + metrics.accuracy());
 			 }catch(Exception ex){
 				 logger.info("Exception = " + ex.getMessage());
 			 }
