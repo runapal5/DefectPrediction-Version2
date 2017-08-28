@@ -71,7 +71,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		
 		 JavaRDD<LabeledPoint> loadedTestdata = MLUtils.loadLibSVMFile(context.sparkContext().sc(), testDatas).toJavaRDD();  
 		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.count()); 
-		 logger.info("*************Test Data Path Loaded**********" +loadedTestdata.toDebugString()); 
+		 //logger.info("*************Test Data Path Loaded**********" +loadedTestdata.toDebugString()); 
 		 long totalDataCount = loadedTestdata.count();
 		 long diffCount = 0;
 		 try{
