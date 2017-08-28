@@ -91,14 +91,23 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 logger.info("predictionAndLabels: \n" + predictionAndLabels.toDebugString());
 				 
 				 logger.info("predictionAndLabels###: \n" + predictionAndLabels.toString());
+				 
+				 
 	
 				 // Get evaluation metrics.
 				 MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
 	
-				 // Confusion matrix
-				 Matrix confusion = metrics.confusionMatrix();
-				 logger.info("Confusion matrix: \n" + confusion);
-	
+				 //logger.info( "Precision: " + metrics.precision() );
+				 //logger.info( "Recall: " + metrics.recall() );
+				 //logger.info( "F1: \n" + metrics.fMeasure() );
+				 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
+				
+				 
+				 logger.info( "TP::"+metrics.confusionMatrix().toString(0, 0));
+				 logger.info( "FN::"+metrics.confusionMatrix().toString(0, 1));
+				 logger.info( "FP::"+metrics.confusionMatrix().toString(1, 0));
+				 logger.info( "TN::"+metrics.confusionMatrix().toString(1, 1));
+				 
 				 // Overall statistics
 				// logger.info("Accuracy = " + metrics.accuracy());
 			 }catch(Exception ex){
