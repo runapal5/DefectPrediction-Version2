@@ -9,6 +9,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.mllib.evaluation.MulticlassMetrics;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
@@ -25,9 +26,10 @@ import scala.Tuple2;
 
 
 
+
 import com.niit.defectprediction.CsvFileWriter;
 
-
+import org.apache.spark.mllib.linalg.Matrix;
 
 
 
@@ -76,7 +78,24 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			 JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
 			 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
 			 
-			 
+			
+			 try{
+				// Compute raw scores on the test set.
+				 JavaPairRDD<Object, Object> predictionAndLabels = parallelLabelled.mapToPair(p ->
+				   new Tuple2<>(model.predict(p.features()), p.label()));
+	
+				 // Get evaluation metrics.
+				 MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
+	
+				 // Confusion matrix
+				 Matrix confusion = metrics.confusionMatrix();
+				 logger.info("Confusion matrix: \n" + confusion);
+	
+				 // Overall statistics
+				 logger.info("Accuracy = " + metrics.accuracy());
+			 }catch(Exception ex){
+				 logger.info("Exception = " + ex.getMessage());
+			 }
 			 
 			 
 			 int size = parallelLoadedTestdataList.size(); // instead of loadedTestdataList
@@ -108,11 +127,16 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 }
 		 logger.info("*************Prediction Done**********"+predictList.size()); 
 		 
-		  Double testErr =  1.0 * (totalDataCount - diffCount) / totalDataCount;
+		 
+		 
+		 
+		 
+		 
+		/*  Double testErr =  1.0 * (totalDataCount - diffCount) / totalDataCount;
 		  logger.info("*********Inaccurate****Test Error**********"+testErr); 
 			      
 		  Double accuracy = 100 -  testErr ;
-		  logger.info("*********Accurate************"+accuracy); 
+		  logger.info("*********Accurate************"+accuracy); */
 		 
 		 
 		   // Writing Output to CSV File
