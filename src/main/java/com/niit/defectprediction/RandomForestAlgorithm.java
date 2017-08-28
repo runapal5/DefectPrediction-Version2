@@ -2,6 +2,7 @@ package com.niit.defectprediction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.predictionio.controller.java.P2LJavaAlgorithm;
@@ -9,6 +10,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.ml.linalg.Vector;
 import org.apache.spark.mllib.evaluation.MulticlassMetrics;
 import org.apache.spark.mllib.linalg.Matrix;
 import org.apache.spark.mllib.linalg.Vectors;
@@ -22,13 +24,7 @@ import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
-
 import scala.Tuple2;
-
-
-
-
-
 import com.niit.defectprediction.CsvFileWriter;
 
 //import org.apache.spark.mllib.linalg.Matrix;
@@ -102,11 +98,17 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 //logger.info( "F1: \n" + metrics.fMeasure() );
 				 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
 				
+			     scala.collection.Iterator<org.apache.spark.mllib.linalg.Vector> mtTr = metrics.confusionMatrix().rowIter();
+			     logger.info( "mtTr.size==="+mtTr.size());
+				while(mtTr.hasNext()){
+				 double[] arr =	mtTr.next().toArray();
+				 logger.info( "arr.size==="+arr.length);
+				}
 				 
-				 logger.info( "TP::"+metrics.confusionMatrix().index(0, 0));
+				 /*logger.info( "TP::"+metrics.confusionMatrix().index(0, 0));
 				 logger.info( "FN::"+metrics.confusionMatrix().index(0, 1));
 				 logger.info( "FP::"+metrics.confusionMatrix().index(1, 0));
-				 logger.info( "TN::"+metrics.confusionMatrix().index(1, 1));
+				 logger.info( "TN::"+metrics.confusionMatrix().index(1, 1));*/
 				 
 				 // Overall statistics
 				// logger.info("Accuracy = " + metrics.accuracy());
