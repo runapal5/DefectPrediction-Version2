@@ -15,7 +15,7 @@ public class CsvFileWriter {
 	private static final String NEW_LINE_SEPARATOR = "\n";
 	
 	//CSV file header
-	private static final String FILE_HEADER = "Actual,RegWt,ReqSize,ReqQuality,Prediction";
+	private static final String FILE_HEADER = "Actual,RegWt,ModuleQuality,ModuleCriticality,ReqId,TestId,RunCycle,Prediction";
 
 	public static void writeCsvFile(String fileName, List<TestDataResult> predResultList) {
 		
@@ -36,11 +36,18 @@ public class CsvFileWriter {
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(String.valueOf(trainedData.getRegwt()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getReqsize()));
-				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(String.valueOf(trainedData.getReqquality()));
 				fileWriter.append(COMMA_DELIMITER);
+				fileWriter.append(String.valueOf(trainedData.getReqsize()));
+				fileWriter.append(COMMA_DELIMITER);
+				fileWriter.append(String.valueOf(trainedData.getReqId()));
+				fileWriter.append(COMMA_DELIMITER);
+				fileWriter.append(String.valueOf(trainedData.getTestId()));
+				fileWriter.append(COMMA_DELIMITER);
+				fileWriter.append(String.valueOf(trainedData.getRunCycle()));
+				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(String.valueOf(trainedData.getPredicted()));
+				
 				fileWriter.append(NEW_LINE_SEPARATOR);
 			}
 
