@@ -22,7 +22,6 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.apache.spark.mllib.util.MLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.spark.sql.execution.stat.StatFunctions.QuantileSummaries..Stats;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
