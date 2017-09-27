@@ -11,6 +11,7 @@ import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.ml.linalg.Vector;
+import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics;
 import org.apache.spark.mllib.evaluation.MulticlassMetrics;
 import org.apache.spark.mllib.linalg.Matrix;
 import org.apache.spark.mllib.linalg.Vectors;
@@ -24,7 +25,9 @@ import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
+
 import scala.Tuple2;
+
 import com.niit.defectprediction.CsvFileWriter;
 
 //import org.apache.spark.mllib.linalg.Matrix;
@@ -70,13 +73,15 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 //logger.info("*************Test Data Path Loaded**********" +loadedTestdata.toDebugString()); 
 		 long totalDataCount = loadedTestdata.count();
 		 long diffCount = 0;
+		
+		 
 		 try{
 		 
 			 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
 			 JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
 			 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
 			 
-			
+			/*
 			 try{
 				// Compute raw scores on the test set.
 				 JavaPairRDD<Object, Object> predictionAndLabels = parallelLabelled.mapToPair(p ->
@@ -92,6 +97,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	
 				 // Get evaluation metrics.
 				 MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
+				 //BinaryClassificationMetrics  metrics = new BinaryClassificationMetrics(predictionAndLabels.rdd());
 	
 				 //logger.info( "Precision: " + metrics.precision() );
 				 //logger.info( "Recall: " + metrics.recall() );
@@ -99,18 +105,18 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
 				
 				 
-				 /*logger.info( "TP::"+metrics.confusionMatrix().index(0, 0));
+				 logger.info( "TP::"+metrics.confusionMatrix().index(0, 0));
 				 logger.info( "FN::"+metrics.confusionMatrix().index(0, 1));
 				 logger.info( "FP::"+metrics.confusionMatrix().index(1, 0));
-				 logger.info( "TN::"+metrics.confusionMatrix().index(1, 1));*/
+				 logger.info( "TN::"+metrics.confusionMatrix().index(1, 1));
 				 
 				 // Overall statistics
 				// logger.info("Accuracy = " + metrics.accuracy());
 			 }catch(Exception ex){
 				 logger.info("Exception = " + ex.getMessage());
 			 }
-			 
-			 
+			*/ 
+		   	 
 			 int size = parallelLoadedTestdataList.size(); // instead of loadedTestdataList
 			 logger.info("*************Test Data Path Loaded:size**********" +size); 
 			 
@@ -126,7 +132,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 //logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
 				 //logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
 				 
-				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],predicted));
+				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted));
 				 if(actual != predicted){
 					 diffCount = diffCount+1 ;
 				 }
