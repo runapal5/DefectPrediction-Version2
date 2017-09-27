@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.predictionio.controller.java.P2LJavaAlgorithm;
+import org.apache.predictionio.data.api.Stats;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -21,6 +22,7 @@ import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.apache.spark.mllib.util.MLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.spark.sql.execution.stat.StatFunctions.QuantileSummaries..Stats;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -80,6 +82,20 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
 			 JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
 			 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
+			 
+			 
+			 loadedTestdata.take(5).forEach(x -> { 
+				  System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(x.features()), x.label()));    
+				});
+			 
+			 JavaPairRDD<Object, Object> predictionsAndLabels = loadedTestdata.mapToPair(
+				        p -> new Tuple2<Object, Object>(model.predict(p.features()), p.label())
+				    );
+
+			 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
+			 
+			// logger.info("predictionAndLabels: \n" + predictionsAndLabels.toDebugString());
+			 
 			 
 			/*
 			 try{
