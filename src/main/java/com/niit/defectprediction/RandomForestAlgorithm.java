@@ -83,7 +83,10 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
 			 
 			 
-			 loadedTestdata.take(5).forEach(x -> { 
+			 
+			 
+			 
+			 parallelLoadedTestdataList.forEach(x -> { 
 				  System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(x.features()), x.label()));    
 				});
 			 
