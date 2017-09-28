@@ -76,126 +76,59 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 long diffCount = 0;
 		
 		 
-		 try{
 		 
-			 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
-			 JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
-			 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
+		 
+		 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
+		 JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
+		 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
 			 
 			 
+		 parallelLoadedTestdataList.forEach(labelData -> { 
 			 
-			 
-			 
-			 parallelLoadedTestdataList.forEach(x -> { 
-				  System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(x.features()), x.label()));    
-				});
-			 
-			 JavaPairRDD<Object, Object> predictionsAndLabels = loadedTestdata.mapToPair(
-				        p -> new Tuple2<Object, Object>(model.predict(p.features()), p.label())
-				    );
-
-			 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
-			 try{
-			 
-					 // Get evaluation metrics.
-					 MulticlassMetrics metrics = new MulticlassMetrics(predictionsAndLabels.rdd());
-					 Matrix confusionMatrix = metrics.confusionMatrix();
-					 
-					 
-					 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
-					 
-					// logger.info( "\nAccuracy \n" +  metrics.accuracy());
-					 logger.info( "\nPrecision \n" +  metrics.precision());
-					 logger.info( "\nPrecision \n" +  metrics.recall());
-					 logger.info( "\nLabels \n"+metrics.labels());
-					// logger.info("predictionAndLabels: \n" + predictionsAndLabels.toDebugString());
-			 }catch(Exception ex){
-				 logger.info("Exception = " + ex.getMessage());
-			 }
-			 
-			/*
-			 try{
-				// Compute raw scores on the test set.
-				 JavaPairRDD<Object, Object> predictionAndLabels = parallelLabelled.mapToPair(p ->
-				   new Tuple2<>(model.predict(p.features()), p.label()));
-				 
-				 logger.info("predictionAndLabelsCount: \n" + predictionAndLabels.count());
-				 
-				 logger.info("predictionAndLabels: \n" + predictionAndLabels.toDebugString());
-				 
-				 logger.info("predictionAndLabels###: \n" + predictionAndLabels.toString());
-				 
-				 
-	
-				 // Get evaluation metrics.
-				 MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
-				 //BinaryClassificationMetrics  metrics = new BinaryClassificationMetrics(predictionAndLabels.rdd());
-	
-				 //logger.info( "Precision: " + metrics.precision() );
-				 //logger.info( "Recall: " + metrics.recall() );
-				 //logger.info( "F1: \n" + metrics.fMeasure() );
-				 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
-				
-				 
-				 logger.info( "TP::"+metrics.confusionMatrix().index(0, 0));
-				 logger.info( "FN::"+metrics.confusionMatrix().index(0, 1));
-				 logger.info( "FP::"+metrics.confusionMatrix().index(1, 0));
-				 logger.info( "TN::"+metrics.confusionMatrix().index(1, 1));
-				 
-				 // Overall statistics
-				// logger.info("Accuracy = " + metrics.accuracy());
-			 }catch(Exception ex){
-				 logger.info("Exception = " + ex.getMessage());
-			 }
-			*/ 
-		   	 
-			 int size = parallelLoadedTestdataList.size(); // instead of loadedTestdataList
-			 logger.info("*************Test Data Path Loaded:size**********" +size); 
-			 
-			 for(int i=0; i < size ; i++){
-				 LabeledPoint labelData = parallelLoadedTestdataList.get(i);//instead of loadedTestdataList
-				 double[] featArr = labelData.features().toArray();
+			     double[] featArr = labelData.features().toArray();
 				 double actual = labelData.label();
-				 double predicted = model.predict(labelData.features());
-				 //logger.info(i+"*************labelData**********"+labelData.toString());
-				 //logger.info("*************labelData:label**********" +labelData.label());
-				 //logger.info("*************labelData:features**********" +labelData.features());
-				 //double[] featArr = labelData.features().toArray();
-				 //logger.info("***Features*******"+featArr[0]+","+featArr[1]+","+featArr[2]);
-				 //logger.info("Predict:::"+model.predict(labelData.features()) +", Actual::"+labelData.label());
-				 
+				 double predicted = randomForestModel.predict(labelData.features());
+				 System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(labelData.features()), labelData.label())); 
 				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted));
-				 if(actual != predicted){
-					 diffCount = diffCount+1 ;
-				 }
-				 
-				 //featArr[0] - regwt , featArr[1] - reqsize , featArr[2] - reqquality
-			 }
-			 
-		 }catch(Exception e){
-			 logger.info("*************Exception in gettting prediction**********" +e.getMessage()); 
-			 e.printStackTrace();
-		 }
-		 logger.info("*************Prediction Done**********"+predictList.size()); 
+			  
+			});
 		 
+		 JavaPairRDD<Object, Object> predictionsAndLabels = loadedTestdata.mapToPair(
+			        p -> new Tuple2<Object, Object>(model.predict(p.features()), p.label())
+			    );
+
+		 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
 		 
-		 
-		 
-		 
-		 
-		/*  Double testErr =  1.0 * (totalDataCount - diffCount) / totalDataCount;
-		  logger.info("*********Inaccurate****Test Error**********"+testErr); 
-			      
-		  Double accuracy = 100 -  testErr ;
-		  logger.info("*********Accurate************"+accuracy); */
-		 
-		 
-		   // Writing Output to CSV File
+		  // Writing Output to CSV File
 		   String testDataResultpath =  ap.getTestDataFile();
 	       logger.info("TestData File:\n" + testDataResultpath); 
 	       CsvFileWriter.writeCsvFile(testDataResultpath, predictList); 
 		 
 	       logger.info("*************Output Saved**********"); 
+		 
+		 
+		 try{
+		 
+				 // Get evaluation metrics.
+				 MulticlassMetrics metrics = new MulticlassMetrics(predictionsAndLabels.rdd());
+				 Matrix confusionMatrix = metrics.confusionMatrix();
+				 
+				 
+				 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
+				 
+				// logger.info( "\nAccuracy \n" +  metrics.accuracy());
+				 logger.info( "\nPrecision \n" +  metrics.precision());
+				 logger.info( "\nRecall \n" +  metrics.recall());
+				 
+				// logger.info("predictionAndLabels: \n" + predictionsAndLabels.toDebugString());
+		 }catch(Exception ex){
+			 logger.info("Exception = " + ex.getMessage());
+		 }
+			 
+			
+		 logger.info("*************Prediction Done**********"+predictList.size()); 
+		 		
+		 
 		
 		return new PredictedResult(predictList) ;
 		
