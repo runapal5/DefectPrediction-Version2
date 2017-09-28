@@ -95,20 +95,23 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				    );
 
 			 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
+			 try{
 			 
-			 // Get evaluation metrics.
-			 MulticlassMetrics metrics = new MulticlassMetrics(predictionsAndLabels.rdd());
-			 Matrix confusionMatrix = metrics.confusionMatrix();
-			 
-			 
-			 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
-			 
-			 logger.info( "\nAccuracy \n" +  metrics.accuracy());
-			 logger.info( "\nPrecision \n" +  metrics.precision());
-			 logger.info( "\nPrecision \n" +  metrics.recall());
-			 logger.info( "\nLabels \n"+metrics.labels());
-			// logger.info("predictionAndLabels: \n" + predictionsAndLabels.toDebugString());
-			 
+					 // Get evaluation metrics.
+					 MulticlassMetrics metrics = new MulticlassMetrics(predictionsAndLabels.rdd());
+					 Matrix confusionMatrix = metrics.confusionMatrix();
+					 
+					 
+					 logger.info( "\nConfusion metrics: \n" + metrics.confusionMatrix());
+					 
+					// logger.info( "\nAccuracy \n" +  metrics.accuracy());
+					 logger.info( "\nPrecision \n" +  metrics.precision());
+					 logger.info( "\nPrecision \n" +  metrics.recall());
+					 logger.info( "\nLabels \n"+metrics.labels());
+					// logger.info("predictionAndLabels: \n" + predictionsAndLabels.toDebugString());
+			 }catch(Exception ex){
+				 logger.info("Exception = " + ex.getMessage());
+			 }
 			 
 			/*
 			 try{
