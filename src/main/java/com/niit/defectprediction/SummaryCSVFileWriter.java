@@ -8,16 +8,16 @@ import java.util.List;
  * @author runa
  * 
  */
-public class CsvFileWriter {
+public class SummaryCSVFileWriter {
 	
 	//Delimiter used in CSV file
 	private static final String COMMA_DELIMITER = ",";
 	private static final String NEW_LINE_SEPARATOR = "\n";
 	
 	//CSV file header
-	private static final String FILE_HEADER = "Actual,RegWt,ModuleQuality,ModuleCriticality,ReqId,TestId,RunCycle,Prediction";
+	private static final String FILE_HEADER = "ReqId,Total No. Of TestCases,Test Case Runs,Predicted Failures";
 
-	public static void writeCsvFile(String fileName, List<TestDataResult> predResultList) {
+	public static void writeCsvFile(String fileName, List<RequestDetails> predResultList) {
 		
 		FileWriter fileWriter = null;
 				
@@ -31,23 +31,15 @@ public class CsvFileWriter {
 			fileWriter.append(NEW_LINE_SEPARATOR);
 			
 			//Write a new student object list to the CSV file
-			for (TestDataResult trainedData : predResultList) {
-				fileWriter.append(String.valueOf(trainedData.getActual()));
+			for (RequestDetails moduleData : predResultList) {
+				fileWriter.append(String.valueOf(moduleData.getRequirementId().intValue()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getRegwt()));
+				fileWriter.append(String.valueOf(moduleData.getTotalTC().intValue()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getReqquality()));
+				fileWriter.append(String.valueOf(moduleData.getTotalTCRun().intValue()));
 				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getReqsize()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getReqId()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getTestId()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getRunCycle()));
-				fileWriter.append(COMMA_DELIMITER);
-				fileWriter.append(String.valueOf(trainedData.getPredicted()));
-				
+				fileWriter.append(String.valueOf(moduleData.getTotalFail()));
+
 				fileWriter.append(NEW_LINE_SEPARATOR);
 			}
 

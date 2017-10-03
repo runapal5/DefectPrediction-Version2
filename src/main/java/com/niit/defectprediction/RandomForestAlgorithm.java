@@ -2,8 +2,11 @@ package com.niit.defectprediction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.predictionio.controller.java.P2LJavaAlgorithm;
 import org.apache.predictionio.data.api.Stats;
@@ -30,6 +33,8 @@ import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 
 import com.niit.defectprediction.CsvFileWriter;
+import com.niit.defectprediction.RequestDetails;
+
 
 //import org.apache.spark.mllib.linalg.Matrix;
 
@@ -58,7 +63,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		final RandomForestModel model = randomForestModel;
 		//logger.info("Learned classification tree model:\n" + model.toDebugString()); 
 
-		String testDatas = query.getTestDataPath();
+		String testDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".txt";
 		logger.info("Test Data Path:\n" +testDatas); 
 		
 		//GETTING THE SPARK CONTEXT
@@ -81,7 +86,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 List<LabeledPoint> loadedTestdataList =   loadedTestdata.collect();
 		 JavaRDD<LabeledPoint> parallelLabelled =  ctx.parallelize(loadedTestdataList);
 		 List<LabeledPoint> parallelLoadedTestdataList =   parallelLabelled.collect(); 
-			 
+		 HashMap<Double,ArrayList<TestDataResult>> reqMap = new HashMap<Double,ArrayList<TestDataResult>>();	 
 			 
 		 parallelLoadedTestdataList.forEach(labelData -> { 
 			 
@@ -89,8 +94,25 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 double actual = labelData.label();
 				 double predicted = randomForestModel.predict(labelData.features());
 				 System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(labelData.features()), labelData.label())); 
-				 predictList.add(new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted));
+				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted);
+				 
+				 predictList.add(testDataResult);
 			  
+				 //REQID : featArr[3]
+				 if(reqMap.containsKey(featArr[3]))
+				  {
+					  ArrayList<TestDataResult> testCaseDtlList = reqMap.get(featArr[3]);
+					  testCaseDtlList.add(testDataResult);
+					  reqMap.put(featArr[3], testCaseDtlList);
+					  
+				  }else{
+					  ArrayList<TestDataResult> testCaseDtlList = new ArrayList<TestDataResult>(); 
+					  testCaseDtlList.add(testDataResult);
+					  reqMap.put(featArr[3], testCaseDtlList);
+					  
+				  }
+				 
+				 
 			});
 		 
 		 JavaPairRDD<Object, Object> predictionsAndLabels = loadedTestdata.mapToPair(
@@ -99,14 +121,26 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 
 		 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
 		 
-		  // Writing Output to CSV File
+		 ArrayList<RequestDetails> reqDetailsSummary = setRequestSummaryDtls(reqMap);
+		 
+		 
+		  // Writing Detailed Output to CSV File
 		   String testDataResultpath =  ap.getTestDataFile();
 	       logger.info("TestData File:\n" + testDataResultpath); 
 	       CsvFileWriter.writeCsvFile(testDataResultpath, predictList); 
 		 
 	       logger.info("*************Output Saved**********"); 
+	       
+	       
+	       // Writing Summary Output to CSV File
+		   String summtestDataResultpath =  ap.getTestDataSummaryFile();
+	       logger.info("Summmary TestData File:\n" + summtestDataResultpath); 
+	       SummaryCSVFileWriter.writeCsvFile(summtestDataResultpath, reqDetailsSummary); 
 		 
+	       logger.info("*************Output Saved**********"); 
+	       
 		 
+		 /*
 		 try{
 		 
 				 // Get evaluation metrics.
@@ -124,15 +158,65 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 }catch(Exception ex){
 			 logger.info("Exception = " + ex.getMessage());
 		 }
-			 
+		*/	 
 			
-		 logger.info("*************Prediction Done**********"+predictList.size()); 
+		logger.info("*************Prediction Done**********"+predictList.size()); 
 		 		
 		 
 		
-		return new PredictedResult(predictList) ;
+		return new PredictedResult(reqDetailsSummary) ;
 		
 	}
+
+	private ArrayList<RequestDetails> setRequestSummaryDtls(
+			HashMap<Double, ArrayList<TestDataResult>> requirmentTestCaseMap) {
+		 Iterator<Map.Entry<Double,ArrayList<TestDataResult>>> iterator = requirmentTestCaseMap.entrySet().iterator();
+		 ArrayList<RequestDetails>  requirmentDetailsMap = new ArrayList<RequestDetails>();
+		 while(iterator.hasNext()){
+	            Map.Entry<Double,ArrayList<TestDataResult>> entry = iterator.next();
+	           /* System.out.printf("Key : %s and Value: %s %n", entry.getKey(), 
+	                                                           entry.getValue().size());*/
+	            //iterator.remove(); // right way to remove entries from Map,  avoids ConcurrentModificationException
+	            Double reqId = entry.getKey(); // Combination of ReqID 
+	            ArrayList<TestDataResult> testCaseList = entry.getValue();
+	            int size = testCaseList.size();
+	            int totalPassCount = 0; //PASS = 0
+	            int totalFailCount = 0; //FAIL = 1
+	            int totalLastCycleRun = 0;
+	            Set<Double> testCaseIdSet = new HashSet<Double>();
+	            for(int i=0; i < size ; i++){
+	            	TestDataResult testCase = testCaseList.get(i);
+	            	if(testCase.getPredicted() == 0) {
+	            		totalPassCount = totalPassCount + 1;
+	            	}else{
+	            		totalFailCount = totalFailCount + 1;
+	            	}
+	            	testCaseIdSet.add(testCase.getTestId());
+	            	totalLastCycleRun = totalLastCycleRun + (int)(testCase.getRunCycle());
+	            }
+	            int totalTCPerReqId =  testCaseIdSet.size(); // Total Number of TC's per module/requirement
+	           // int totalTCRun = totalPassCount + totalFailCount ; // Total Number of TC's run which should be equal to size of testCaseList
+	            
+	            
+	            
+	           // double failurePercentage = (double)totalFailCount*100/totalTCRun;
+	            
+	     
+	            RequestDetails reqDtl = new RequestDetails(reqId,totalTCPerReqId, totalLastCycleRun,totalFailCount);
+	            requirmentDetailsMap.add(reqDtl);
+	            //System.out.println("ReqId:::"+reqId.intValue()+ ", No.OfTC::"+totalTCPerReqId + ", totalTCRun:::"+totalTCRun +", SizOfTCList::"+size +", TotalPass:::"+totalPassCount +", TotalFail::"+ totalFailCount +", MeanOfFailedTC::"+ meanOfFailedTC + ", MeanOfTCRun:::"+ meanOfTCRun + ", MeanOfTCPerReq:::"+meanOfTCPerReq);
+		 }
+         // System.out.println(requirmentDetailsMap);
+          
+         
+          System.out.println(requirmentDetailsMap);
+		 
+		 
+		  
+		  return requirmentDetailsMap;
+	}
+
+
 
 	@Override
 	public RandomForestModel train(SparkContext sparkContext, PreparedData data) {

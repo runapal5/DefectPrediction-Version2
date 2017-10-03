@@ -3,16 +3,16 @@ package com.niit.defectprediction;
 import java.io.Serializable;
 import java.util.List;
 
-public class PredictedResult implements Serializable{
-	 private final List<RequestDetails> results;
+public class PredictedResult1 implements Serializable{
+	 private final List<TestDataResult> results;
 
 	
-	 public PredictedResult(List<RequestDetails> results) {
+	 public PredictedResult1(List<TestDataResult> results) {
 	        this.results = results;
 	    }
 
 	   
-	  public List<RequestDetails> getResults() {
+	  public List<TestDataResult> getResults() {
 			return results;
 		}
 
@@ -20,7 +20,7 @@ public class PredictedResult implements Serializable{
 
 	    @Override
 	    public String toString() {
-	        return "PredictedResult{" +
+	        return "PredictedResult1{" +
 	                "results=" + results +
 	                '}';
 	    }
