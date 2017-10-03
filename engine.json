@@ -19,7 +19,9 @@
         "maxDepth": 4,
         "maxBins": 100,
         "seed": 200,
-        "testDataFile": "/quickstartapp/testDataResult.csv"
+        "testDataPath": "/quickstartapp/",
+        "testDataFile": "/quickstartapp/testDataResult.csv",
+        "testDataSummaryFile": "/quickstartapp/testDataSummaryResult.csv"
                
       }
     }
