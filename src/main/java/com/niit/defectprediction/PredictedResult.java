@@ -4,24 +4,26 @@ import java.io.Serializable;
 import java.util.List;
 
 public class PredictedResult implements Serializable{
-	 private final List<RequestDetails> results;
+	 private final ProgramData programData;
 
 	
-	 public PredictedResult(List<RequestDetails> results) {
-	        this.results = results;
+	 public PredictedResult(ProgramData programData) {
+	        this.programData = programData;
 	    }
 
 	   
-	  public List<RequestDetails> getResults() {
-			return results;
-		}
+	public ProgramData getProgramData() {
+		return programData;
+	}
 
-	 
 
-	    @Override
+
+
+
+		@Override
 	    public String toString() {
 	        return "PredictedResult{" +
-	                "results=" + results +
+	                "programData=" + programData +
 	                '}';
 	    }
 }

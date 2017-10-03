@@ -139,7 +139,27 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 
 	       logger.info("*************Output Saved**********"); 
 	       
-		 
+		   int totalNumberOfRequirement = 0;
+		   int totalNumberOfTestCases = 0;
+		   int totalNumberOfDefectPredicted = 0;
+		   
+	       try{
+	    	   if(reqDetailsSummary != null && !reqDetailsSummary.isEmpty()){
+	    		   Iterator<RequestDetails> requestDetailsItr = reqDetailsSummary.iterator();
+	    		   while(requestDetailsItr.hasNext()){
+	    			   RequestDetails reqDtl = requestDetailsItr.next();
+	    			   totalNumberOfRequirement = totalNumberOfRequirement + 1;
+	    			   totalNumberOfTestCases = totalNumberOfTestCases + reqDtl.getTotalTC();
+	    			   totalNumberOfDefectPredicted = totalNumberOfDefectPredicted + reqDtl.getTotalFail();
+	    		   }
+	    		   
+	    	   }
+	    	   
+	       }catch(Exception ex){
+	    	   ex.printStackTrace();
+	       }
+	       
+	     ProgramData programData = new ProgramData(totalNumberOfRequirement, totalNumberOfTestCases,totalNumberOfDefectPredicted ,reqDetailsSummary);
 		 /*
 		 try{
 		 
@@ -164,7 +184,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 		
 		 
 		
-		return new PredictedResult(reqDetailsSummary) ;
+		return new PredictedResult(programData) ;
 		
 	}
 
