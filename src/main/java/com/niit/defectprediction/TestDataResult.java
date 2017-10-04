@@ -9,8 +9,10 @@ public class TestDataResult {
     private final double reqId;
     private final double testId;
     private final double runCycle;
+    private final String reqName;
+    
 
-	public TestDataResult(double actual, double regwt,double reqquality ,double reqsize ,double reqId,double testId ,double runCycle,double predicted){
+	public TestDataResult(double actual, double regwt,double reqquality ,double reqsize ,double reqId,double testId ,double runCycle,double predicted,String reqName){
     	this.actual = actual;
     	this.regwt= regwt;
     	this.reqsize = reqsize;
@@ -19,9 +21,14 @@ public class TestDataResult {
     	this.reqId = reqId;
     	this.testId = testId;
     	this.runCycle = runCycle;
+    	this.reqName = reqName;
     }
 	
-	 
+
+	public String getReqName() {
+		return reqName;
+	}
+
 
 
 	public double getReqId() {
@@ -29,13 +36,9 @@ public class TestDataResult {
 	}
 
 
-
-
 	public double getTestId() {
 		return testId;
 	}
-
-
 
 
 	public double getRunCycle() {
@@ -43,13 +46,9 @@ public class TestDataResult {
 	}
 
 
-
-
 	public double getActual() {
 		return actual;
 	}
-
-
 
 
 	public double getRegwt() {
@@ -57,13 +56,9 @@ public class TestDataResult {
 	}
 
 
-
-
 	public double getReqsize() {
 		return reqsize;
 	}
-
-
 
 
 	public double getReqquality() {
@@ -71,13 +66,9 @@ public class TestDataResult {
 	}
 
 
-
-
 	public double getPredicted() {
 		return predicted;
 	}
-
-
 
 
 	@Override

@@ -15,7 +15,7 @@ public class SummaryCSVFileWriter {
 	private static final String NEW_LINE_SEPARATOR = "\n";
 	
 	//CSV file header
-	private static final String FILE_HEADER = "ReqId,Total No. Of TestCases,Test Case Runs,Predicted Failures";
+	private static final String FILE_HEADER = "ReqId,ReqName,Total No. Of TestCases,Test Case Runs,Predicted Failures";
 
 	public static void writeCsvFile(String fileName, List<RequestDetails> predResultList) {
 		
@@ -33,6 +33,8 @@ public class SummaryCSVFileWriter {
 			//Write a new student object list to the CSV file
 			for (RequestDetails moduleData : predResultList) {
 				fileWriter.append(String.valueOf(moduleData.getRequirementId().intValue()));
+				fileWriter.append(COMMA_DELIMITER);
+				fileWriter.append(String.valueOf(moduleData.getReqName()));
 				fileWriter.append(COMMA_DELIMITER);
 				fileWriter.append(String.valueOf(moduleData.getTotalTC().intValue()));
 				fileWriter.append(COMMA_DELIMITER);

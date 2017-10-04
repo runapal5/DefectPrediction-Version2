@@ -66,6 +66,13 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		String testDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".txt";
 		logger.info("Test Data Path:\n" +testDatas); 
 		
+		String reqDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".csv";
+		logger.info("Requirement Datas:\n" +reqDatas); 
+		
+		
+		HashMap<Double,String> reqIdNameMap = RequirementMapReader.readCsvFile(reqDatas) ;
+		
+		
 		//GETTING THE SPARK CONTEXT
 		SparkConf conf = new SparkConf().setAppName("defectPrediction");
 		JavaSparkContext ctx = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
@@ -94,7 +101,10 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 double actual = labelData.label();
 				 double predicted = randomForestModel.predict(labelData.features());
 				 System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(labelData.features()), labelData.label())); 
-				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted);
+				 
+				 String reqName =  reqIdNameMap.get(featArr[3]);
+				 
+				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted,reqName);
 				 
 				 predictList.add(testDataResult);
 			  
@@ -121,7 +131,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 
 		 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
 		 
-		 ArrayList<RequestDetails> reqDetailsSummary = setRequestSummaryDtls(reqMap);
+		 ArrayList<RequestDetails> reqDetailsSummary = setRequestSummaryDtls(reqMap,reqIdNameMap);
 		 
 		 
 		  // Writing Detailed Output to CSV File
@@ -189,7 +199,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	}
 
 	private ArrayList<RequestDetails> setRequestSummaryDtls(
-			HashMap<Double, ArrayList<TestDataResult>> requirmentTestCaseMap) {
+			HashMap<Double, ArrayList<TestDataResult>> requirmentTestCaseMap,HashMap<Double,String> reqIdNameMap) {
 		 Iterator<Map.Entry<Double,ArrayList<TestDataResult>>> iterator = requirmentTestCaseMap.entrySet().iterator();
 		 ArrayList<RequestDetails>  requirmentDetailsMap = new ArrayList<RequestDetails>();
 		 while(iterator.hasNext()){
@@ -221,8 +231,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	            
 	           // double failurePercentage = (double)totalFailCount*100/totalTCRun;
 	            
-	     
-	            RequestDetails reqDtl = new RequestDetails(reqId,totalTCPerReqId, totalLastCycleRun,totalFailCount);
+	            String reqName =  reqIdNameMap.get(reqId);
+	            RequestDetails reqDtl = new RequestDetails(reqId,totalTCPerReqId, totalLastCycleRun,totalFailCount,reqName);
 	            requirmentDetailsMap.add(reqDtl);
 	            //System.out.println("ReqId:::"+reqId.intValue()+ ", No.OfTC::"+totalTCPerReqId + ", totalTCRun:::"+totalTCRun +", SizOfTCList::"+size +", TotalPass:::"+totalPassCount +", TotalFail::"+ totalFailCount +", MeanOfFailedTC::"+ meanOfFailedTC + ", MeanOfTCRun:::"+ meanOfTCRun + ", MeanOfTCPerReq:::"+meanOfTCPerReq);
 		 }

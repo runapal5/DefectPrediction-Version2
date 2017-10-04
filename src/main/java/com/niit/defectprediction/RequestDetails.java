@@ -6,17 +6,31 @@ public class RequestDetails {
 	private Integer totalTC;
 	private Integer totalTCRun;
 	private Integer totalFail;
+	private String reqName;
 	
-	
-	public RequestDetails(Double requirementId,Integer totalTC, Integer totalTCRun, Integer totalFail){
+	public RequestDetails(Double requirementId,Integer totalTC, Integer totalTCRun, Integer totalFail, String reqName){
 		
 		this.requirementId = requirementId;
 		this.totalTC = totalTC ;
 		this.totalTCRun = totalTCRun;
 		this.totalFail = totalFail;
+		this.reqName = reqName;
 	}
 
 	
+	
+	public String getReqName() {
+		return reqName;
+	}
+
+
+
+	public void setReqName(String reqName) {
+		this.reqName = reqName;
+	}
+
+
+
 	public Double getRequirementId() {
 		return requirementId;
 	}
@@ -57,6 +71,7 @@ public class RequestDetails {
     	
 		return "RequestData{" +
                 "ReqId='" + requirementId +
+                "ReqName='" + reqName +
                 ", TotalTC=" + totalTC +
                 ", TotalTCRun=" + totalTCRun +
                 ", TotalFail =" + totalFail +
