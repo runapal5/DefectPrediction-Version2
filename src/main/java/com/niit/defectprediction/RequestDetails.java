@@ -1,6 +1,8 @@
 package com.niit.defectprediction;
 
-public class RequestDetails {
+import com.niit.testcases.TestCaseDetails;
+
+public class RequestDetails implements Comparable<RequestDetails>{
 	
 	private Double requirementId;
 	private Integer totalTC;
@@ -79,7 +81,17 @@ public class RequestDetails {
                
     }
 
-	
+	public int compareTo(RequestDetails reqDetail) {
+
+		int comparePredictedFailure = ((RequestDetails) reqDetail).getTotalFail().intValue();
+
+		//ascending order
+		//return this.runID.intValue() - compareRunID;
+
+		//descending order
+		return comparePredictedFailure - this.totalFail.intValue();
+
+	}
 	
 
 }

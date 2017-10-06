@@ -1,6 +1,7 @@
 package com.niit.defectprediction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -132,6 +133,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
 		 
 		 ArrayList<RequestDetails> reqDetailsSummary = setRequestSummaryDtls(reqMap,reqIdNameMap);
+		 Collections.sort(reqDetailsSummary); // sorting on the basis of the Total No. of Defected Failure
+		 
 		 
 		 
 		  // Writing Detailed Output to CSV File
