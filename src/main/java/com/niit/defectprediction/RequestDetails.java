@@ -1,6 +1,6 @@
 package com.niit.defectprediction;
 
-import com.niit.testcases.TestCaseDetails;
+
 
 public class RequestDetails implements Comparable<RequestDetails>{
 	
