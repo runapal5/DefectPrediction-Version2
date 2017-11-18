@@ -1,5 +1,6 @@
 package com.niit.defectprediction;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,6 +64,9 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 
 		final RandomForestModel model = randomForestModel;
 		//logger.info("Learned classification tree model:\n" + model.toDebugString()); 
+		
+		 
+		
 
 		String testDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".txt";
 		logger.info("Test Data Path:\n" +testDatas); 
@@ -78,6 +82,9 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		SparkConf conf = new SparkConf().setAppName("defectPrediction");
 		JavaSparkContext ctx = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 		JavaStreamingContext context = new JavaStreamingContext(ctx, Durations.seconds(60));
+		
+		RandomForestModel model1 = RandomForestModel.load(context.sparkContext().sc(),"DefectPredicted"+File.separator+"model");
+		logger.info("Learned classification tree model:\n" + model.toDebugString()); 
 		
 		//GETTING THE SPARK CONTEXT
 		
@@ -105,7 +112,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 
 				 String reqName =  reqIdNameMap.get(featArr[3]);
 				 
-				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],predicted,reqName);
+				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],featArr[6],predicted,reqName);
 				 
 				 predictList.add(testDataResult);
 			  
@@ -266,7 +273,10 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		RandomForestModel model = RandomForest.trainClassifier(data.getTrainingData().getLabelledPoints(), ap.getNumClasses(),
 			      categoricalFeaturesInfo, ap.getNumTrees(), ap.getFeatureSubsetStrategy(), ap.getImpurity(), ap.getMaxDepth(), ap.getMaxBins(),
 			      ap.getSeed());
-	
+		
+		
+		model.save(sparkContext, "DefectPredicted"+File.separator+"model");
+		logger.info("Model Saved :::"+ model.toDebugString());
 		
 		return model;
 	}

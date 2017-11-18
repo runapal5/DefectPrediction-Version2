@@ -10,9 +10,11 @@ public class TestDataResult {
     private final double testId;
     private final double runCycle;
     private final String reqName;
-    
+    private final double defectCount;
 
-	public TestDataResult(double actual, double regwt,double reqquality ,double reqsize ,double reqId,double testId ,double runCycle,double predicted,String reqName){
+	
+
+	public TestDataResult(double actual, double regwt,double reqquality ,double reqsize ,double reqId,double testId ,double runCycle,double defectCount,double predicted,String reqName){
     	this.actual = actual;
     	this.regwt= regwt;
     	this.reqsize = reqsize;
@@ -22,6 +24,7 @@ public class TestDataResult {
     	this.testId = testId;
     	this.runCycle = runCycle;
     	this.reqName = reqName;
+    	this.defectCount = defectCount;
     }
 	
 
@@ -70,6 +73,11 @@ public class TestDataResult {
 		return predicted;
 	}
 
+	public double getDefectCount() {
+		return defectCount;
+	}
+
+	
 
 	@Override
     public String toString() {
