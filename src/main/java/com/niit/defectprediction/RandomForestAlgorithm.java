@@ -23,6 +23,7 @@ import org.apache.spark.mllib.linalg.Matrix;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.tree.RandomForest;
+import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
 import org.apache.spark.mllib.util.MLUtils;
 import org.slf4j.Logger;
@@ -63,16 +64,20 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		List<TestDataResult> predictList = new ArrayList<TestDataResult>();
 
 		final RandomForestModel model = randomForestModel;
-		//logger.info("Learned classification tree model:\n" + model.toDebugString()); 
+		logger.info("Learned classification tree model:\n" + model.toDebugString()); 
 		
-		 
 		
-
 		String testDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".txt";
 		logger.info("Test Data Path:\n" +testDatas); 
 		
 		String reqDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".csv";
 		logger.info("Requirement Datas:\n" +reqDatas); 
+		
+		
+		String trainedDatasFile = ap.getTrainedDataSummaryFile().trim() + query.getProjectId().trim()+".csv";
+		logger.info("Requirement Datas:\n" +reqDatas); 
+		
+		HashMap<String,Integer> trainedDataDefects =  CSVTrainedDataReader.readCsvFile(trainedDatasFile);
 		
 		
 		HashMap<Double,String> reqIdNameMap = RequirementMapReader.readCsvFile(reqDatas) ;
@@ -83,8 +88,21 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		JavaSparkContext ctx = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 		JavaStreamingContext context = new JavaStreamingContext(ctx, Durations.seconds(60));
 		
-		RandomForestModel model1 = RandomForestModel.load(context.sparkContext().sc(),"DefectPredicted"+File.separator+"model");
-		logger.info("Learned classification tree model:\n" + model.toDebugString()); 
+		
+		
+		
+		/*
+		     *********RandomForestModel is loaded from predict method itself.
+		    //final RandomForestModel model = randomForestModel;
+		    //logger.info("Learned classification tree model:\n" + model.toDebugString()); 
+		        OR
+		  
+		    //RandomForestModel model1 = RandomForestModel.load(context.sparkContext().sc(),"DefectPredicted"+File.separator+"model");
+		    //logger.info("Learned classification tree model1:\n" + model1.toDebugString()); 
+		 */
+		
+		//RandomForestModel model1 = RandomForestModel.load(context.sparkContext().sc(),"DefectPredicted"+File.separator+"model");
+		//logger.info("Learned classification tree model1:\n" + model1.toDebugString()); 
 		
 		//GETTING THE SPARK CONTEXT
 		
@@ -111,6 +129,15 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(labelData.features()), labelData.label())); 
 				 
 				 String reqName =  reqIdNameMap.get(featArr[3]);
+				 Double reqId = featArr[4] ;
+				 Double testId = featArr[5] ;
+				 Integer defectCount = 0;
+				 
+				 if(trainedDataDefects.size() != 0){
+					defectCount = trainedDataDefects.get(String.valueOf(reqId) + "-"+ String.valueOf(testId));
+				 }
+				 
+				 
 				 
 				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],featArr[6],predicted,reqName);
 				 
@@ -133,11 +160,13 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 
 			});
 		 
+		 /*
 		 JavaPairRDD<Object, Object> predictionsAndLabels = loadedTestdata.mapToPair(
 			        p -> new Tuple2<Object, Object>(model.predict(p.features()), p.label())
 			    );
 
 		 logger.info("predictionAndLabelsCount: \n" + predictionsAndLabels.count());
+		 */
 		 
 		 ArrayList<RequestDetails> reqDetailsSummary = setRequestSummaryDtls(reqMap,reqIdNameMap);
 		 Collections.sort(reqDetailsSummary); // sorting on the basis of the Total No. of Defected Failure
@@ -223,6 +252,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	            int totalPassCount = 0; //PASS = 0
 	            int totalFailCount = 0; //FAIL = 1
 	            int totalLastCycleRun = 0;
+	            int totalNoOfDefectsPredicted = 0; 
+	            
 	            Set<Double> testCaseIdSet = new HashSet<Double>();
 	            for(int i=0; i < size ; i++){
 	            	TestDataResult testCase = testCaseList.get(i);
@@ -230,6 +261,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	            		totalPassCount = totalPassCount + 1;
 	            	}else{
 	            		totalFailCount = totalFailCount + 1;
+	            		totalNoOfDefectsPredicted = totalNoOfDefectsPredicted + (int)testCase.getDefectCount();
 	            	}
 	            	testCaseIdSet.add(testCase.getTestId());
 	            	totalLastCycleRun = totalLastCycleRun + (int)(testCase.getRunCycle());
@@ -242,7 +274,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	           // double failurePercentage = (double)totalFailCount*100/totalTCRun;
 	            
 	            String reqName =  reqIdNameMap.get(reqId);
-	            RequestDetails reqDtl = new RequestDetails(reqId,totalTCPerReqId, totalLastCycleRun,totalFailCount,reqName);
+	            RequestDetails reqDtl = new RequestDetails(reqId,totalTCPerReqId, totalLastCycleRun,totalFailCount,totalNoOfDefectsPredicted,reqName);
 	            requirmentDetailsMap.add(reqDtl);
 	            //System.out.println("ReqId:::"+reqId.intValue()+ ", No.OfTC::"+totalTCPerReqId + ", totalTCRun:::"+totalTCRun +", SizOfTCList::"+size +", TotalPass:::"+totalPassCount +", TotalFail::"+ totalFailCount +", MeanOfFailedTC::"+ meanOfFailedTC + ", MeanOfTCRun:::"+ meanOfTCRun + ", MeanOfTCPerReq:::"+meanOfTCPerReq);
 		 }

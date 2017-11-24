@@ -24,9 +24,11 @@ public class RandomForestAlgorithmsParams implements Params {
 	private final String testDataSummaryFile;
 	
 	private final String testDataPath;
+	
+	private final String trainedDataSummaryFile;
 
 
-	public RandomForestAlgorithmsParams(Integer numClasses ,Integer numTrees ,String featureSubsetStrategy , String impurity , Integer maxDepth , Integer maxBins , Integer seed, String testDataFile, String testDataSummaryFile, String testDataPath){
+	public RandomForestAlgorithmsParams(Integer numClasses ,Integer numTrees ,String featureSubsetStrategy , String impurity , Integer maxDepth , Integer maxBins , Integer seed, String testDataFile, String testDataSummaryFile, String testDataPath, String trainedDataSummaryFile){
 		
 		this.numClasses = numClasses;
 		this.numTrees = numTrees;
@@ -38,9 +40,15 @@ public class RandomForestAlgorithmsParams implements Params {
 		this.testDataFile = testDataFile;
 		this.testDataSummaryFile = testDataSummaryFile;
 		this.testDataPath = testDataPath;
+		this.trainedDataSummaryFile = trainedDataSummaryFile;
 	}
 	
 	
+	public String getTrainedDataSummaryFile() {
+		return trainedDataSummaryFile;
+	}
+
+
 	public String getTestDataPath() {
 		return testDataPath;
 	}

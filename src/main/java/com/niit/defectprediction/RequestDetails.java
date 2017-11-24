@@ -8,14 +8,16 @@ public class RequestDetails implements Comparable<RequestDetails>{
 	private Integer totalTC;
 	private Integer totalTCRun;
 	private Integer totalFail;
+	private Integer totalDefectPredicted;
 	private String reqName;
 	
-	public RequestDetails(Double requirementId,Integer totalTC, Integer totalTCRun, Integer totalFail, String reqName){
+	public RequestDetails(Double requirementId,Integer totalTC, Integer totalTCRun, Integer totalFail, Integer totalDefectPredicted , String reqName){
 		
 		this.requirementId = requirementId;
 		this.totalTC = totalTC ;
 		this.totalTCRun = totalTCRun;
 		this.totalFail = totalFail;
+		this.totalDefectPredicted = totalDefectPredicted;
 		this.reqName = reqName;
 	}
 
@@ -68,6 +70,15 @@ public class RequestDetails implements Comparable<RequestDetails>{
 	}
 	
 	
+	public Integer getTotalDefectPredicted() {
+		return totalDefectPredicted;
+	}
+
+	public void setTotalDefectPredicted(Integer totalDefectPredicted) {
+		this.totalDefectPredicted = totalDefectPredicted;
+	}
+	
+	
 	@Override
     public String toString() {
     	
@@ -77,6 +88,7 @@ public class RequestDetails implements Comparable<RequestDetails>{
                 ", TotalTC=" + totalTC +
                 ", TotalTCRun=" + totalTCRun +
                 ", TotalFail =" + totalFail +
+                ", TotalDefectPredicted =" + totalDefectPredicted +
                 '}';
                
     }
