@@ -70,12 +70,12 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		String testDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".txt";
 		logger.info("Test Data Path:\n" +testDatas); 
 		
-		String reqDatas = ap.getTestDataPath().trim() + query.getProjectId().trim()+".csv";
+		String reqDatas = ap.getTestDataPath().trim() + "Req_" + query.getProjectId().trim()+".csv";
 		logger.info("Requirement Datas:\n" +reqDatas); 
 		
 		
-		String trainedDatasFile = ap.getTrainedDataSummaryFile().trim() + query.getProjectId().trim()+".csv";
-		logger.info("Requirement Datas:\n" +reqDatas); 
+		String trainedDatasFile = ap.getTrainedDataSummaryFile().trim() +"Train_" + query.getProjectId().trim() +".csv";
+		logger.info("Training Datas:\n" +reqDatas); 
 		
 		HashMap<String,Integer> trainedDataDefects =  CSVTrainedDataReader.readCsvFile(trainedDatasFile);
 		
@@ -177,7 +177,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		   String testDataResultpath =  ap.getTestDataFile();
 	       logger.info("TestData File:\n" + testDataResultpath); 
 	       CsvFileWriter.writeCsvFile(testDataResultpath, predictList); 
-		 
+		   
 	       logger.info("*************Output Saved**********"); 
 	       
 	       
