@@ -5,7 +5,7 @@
   "datasource": {
     "params": {
       "appName": "defectPrediction",
-      "trainingData": "/quickstartapp/P2_TrainData.txt"
+      "trainingData": "/quickstartapp/TrainData_P2.txt"
     }
   },
   "algorithms": [
@@ -21,8 +21,7 @@
         "seed": 200,
         "testDataPath": "/quickstartapp/",
         "testDataFile": "/quickstartapp/testDataResult.csv",
-        "testDataSummaryFile": "/quickstartapp/testDataSummaryResult.csv"
-               
+        "testDataSummaryFile": "/quickstartapp/testDataSummaryResult.csv",      
       }
     }
   ]
