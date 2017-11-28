@@ -191,6 +191,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 		   int totalNumberOfRequirement = 0;
 		   int totalNumberOfTestCases = 0;
 		   int totalNumberOfDefectPredicted = 0;
+		   int totalNumberOfTestCycleRun = 0 ;
+		   int totalNumberOfTestCaseFailed = 0;
 		   
 	       try{
 	    	   if(reqDetailsSummary != null && !reqDetailsSummary.isEmpty()){
@@ -199,7 +201,10 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	    			   RequestDetails reqDtl = requestDetailsItr.next();
 	    			   totalNumberOfRequirement = totalNumberOfRequirement + 1;
 	    			   totalNumberOfTestCases = totalNumberOfTestCases + reqDtl.getTotalTC();
-	    			   totalNumberOfDefectPredicted = totalNumberOfDefectPredicted + reqDtl.getTotalFail();
+	    			   totalNumberOfTestCaseFailed = totalNumberOfTestCaseFailed + reqDtl.getTotalFail();
+	    			   totalNumberOfTestCycleRun = totalNumberOfTestCycleRun + reqDtl.getTotalTCRun() ;
+	    			   totalNumberOfDefectPredicted = totalNumberOfDefectPredicted + reqDtl.getTotalDefectPredicted();
+	    			   
 	    		   }
 	    		   
 	    	   }
@@ -208,7 +213,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	    	   ex.printStackTrace();
 	       }
 	       
-	     ProgramData programData = new ProgramData(totalNumberOfRequirement, totalNumberOfTestCases,totalNumberOfDefectPredicted ,reqDetailsSummary);
+	     ProgramData programData = new ProgramData(totalNumberOfRequirement, totalNumberOfTestCases,totalNumberOfDefectPredicted ,totalNumberOfTestCaseFailed , totalNumberOfTestCycleRun ,reqDetailsSummary);
 		 /*
 		 try{
 		 
