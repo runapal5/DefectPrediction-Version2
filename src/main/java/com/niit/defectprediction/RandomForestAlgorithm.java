@@ -129,17 +129,21 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 				 System.out.println(String.format("Predicted: %.1f, Label: %.1f", randomForestModel.predict(labelData.features()), labelData.label())); 
 				 
 				 String reqName =  reqIdNameMap.get(featArr[3]);
-				 Double reqId = featArr[4] ;
-				 Double testId = featArr[5] ;
+				 Double reqId = featArr[3] ;
+				 Double testId = featArr[4] ;
 				 Integer defectCount = 0;
 				 
 				 if(trainedDataDefects.size() != 0){
-					defectCount = trainedDataDefects.get(String.valueOf(reqId) + "-"+ String.valueOf(testId));
+					System.out.println(trainedDataDefects); 
+					System.out.println("ReqId--TestId::::"+reqId+"-"+testId); 
+					defectCount = trainedDataDefects.get(String.valueOf(reqId.intValue()) + "_"+ String.valueOf(testId.intValue()));
+					System.out.println("defectCount==="+defectCount);
 				 }
 				 
 				 
 				 
-				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],featArr[6],predicted,reqName);
+				// TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],featArr[6],predicted,reqName);
+				 TestDataResult testDataResult = new TestDataResult(actual,featArr[0],featArr[1],featArr[2],featArr[3],featArr[4],featArr[5],defectCount,predicted,reqName);
 				 
 				 predictList.add(testDataResult);
 			  
@@ -269,7 +273,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	            		totalNoOfDefectsPredicted = totalNoOfDefectsPredicted + (int)testCase.getDefectCount();
 	            	}
 	            	testCaseIdSet.add(testCase.getTestId());
-	            	totalLastCycleRun = totalLastCycleRun + (int)(testCase.getRunCycle());
+	            	totalLastCycleRun = totalLastCycleRun + ((int)(testCase.getRunCycle()) -1 );
 	            }
 	            int totalTCPerReqId =  testCaseIdSet.size(); // Total Number of TC's per module/requirement
 	           // int totalTCRun = totalPassCount + totalFailCount ; // Total Number of TC's run which should be equal to size of testCaseList
@@ -312,8 +316,8 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 			      ap.getSeed());
 		
 		
-		model.save(sparkContext, "DefectPredicted"+File.separator+"model");
-		logger.info("Model Saved :::"+ model.toDebugString());
+		//model.save(sparkContext, "DefectPredicted"+File.separator+"model");
+		//logger.info("Model Saved :::"+ model.toDebugString());
 		
 		return model;
 	}

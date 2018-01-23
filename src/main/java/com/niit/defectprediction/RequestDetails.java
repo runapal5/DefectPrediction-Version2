@@ -95,13 +95,13 @@ public class RequestDetails implements Comparable<RequestDetails>{
 
 	public int compareTo(RequestDetails reqDetail) {
 
-		int comparePredictedFailure = ((RequestDetails) reqDetail).getTotalFail().intValue();
+		int comparePredictedFailure = ((RequestDetails) reqDetail).getTotalDefectPredicted().intValue();
 
 		//ascending order
 		//return this.runID.intValue() - compareRunID;
 
 		//descending order
-		return comparePredictedFailure - this.totalFail.intValue();
+		return comparePredictedFailure - this.totalDefectPredicted.intValue();
 
 	}
 	
