@@ -273,7 +273,7 @@ public class RandomForestAlgorithm extends P2LJavaAlgorithm<PreparedData, Random
 	            		totalNoOfDefectsPredicted = totalNoOfDefectsPredicted + (int)testCase.getDefectCount();
 	            	}
 	            	testCaseIdSet.add(testCase.getTestId());
-	            	totalLastCycleRun = totalLastCycleRun + ((int)(testCase.getRunCycle()) -1 );
+	            	totalLastCycleRun = totalLastCycleRun + ((int)(testCase.getRunCycle()));
 	            }
 	            int totalTCPerReqId =  testCaseIdSet.size(); // Total Number of TC's per module/requirement
 	           // int totalTCRun = totalPassCount + totalFailCount ; // Total Number of TC's run which should be equal to size of testCaseList
