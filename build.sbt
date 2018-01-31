@@ -6,6 +6,8 @@ name := "defect-prediction"
 
 organization := "io.prediction"
 
+scalaVersion := "2.11.6"
+
 
 libraryDependencies ++= Seq(
  "org.apache.predictionio" %% "apache-predictionio-core" % "0.11.0-incubating" % "provided",
